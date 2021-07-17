@@ -1,0 +1,6 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+alias yarn="docker run --rm --user '$(id -u):$(id -g)' --mount 'type=bind,source=$(pwd),target=/application' --workdir '/application' node yarn"
+
+yarn lint --fix && yarn test
