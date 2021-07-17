@@ -1,0 +1,15 @@
+{
+  "name": "laravel-realtime-client",
+  "version": "0.0.1",
+  "description": "Server library to facilitate Socket.io integration with the Laravel framework.",
+  "keywords": [
+    "laravel",
+    "realtime",
+    "socket.io"
+  ],
+  "author": {
+    "name": "Harivansh"
+  },
+  "license": "MIT",
+  "main": "dist/realtime-server.js"
+}
