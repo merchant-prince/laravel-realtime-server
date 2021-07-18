@@ -3,6 +3,7 @@ import { RedisMock } from '../utilities';
 import RedisSubscriber from '../../src/subscriber/redis-subscriber';
 
 describe('testing the RedisSubscriber class', () => {
+  // subscribe
   it('sanitizes the channel name before calling the callback with it', (done) => {
     const databasePrefix = 'database-prefix-';
     const channelName = 'OneTwo';
