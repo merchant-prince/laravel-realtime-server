@@ -45,9 +45,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint", "npm:7.30.0"],
             ["eslint-config-prettier", "virtual:f7f8b39f194d39a8e34058658074cf8a53479ece520a9dceb0bcb4d19c2deb23878f01a2483d99703b86594739a9ed182e1a68b4879e2cbe40d79da8f8bb5607#npm:8.3.0"],
             ["eslint-plugin-prettier", "virtual:f7f8b39f194d39a8e34058658074cf8a53479ece520a9dceb0bcb4d19c2deb23878f01a2483d99703b86594739a9ed182e1a68b4879e2cbe40d79da8f8bb5607#npm:3.4.0"],
+            ["events", "npm:3.3.0"],
             ["husky", "npm:7.0.1"],
             ["ioredis", "npm:4.27.6"],
-            ["ioredis-mock", "virtual:f7f8b39f194d39a8e34058658074cf8a53479ece520a9dceb0bcb4d19c2deb23878f01a2483d99703b86594739a9ed182e1a68b4879e2cbe40d79da8f8bb5607#npm:5.6.0"],
             ["jest", "virtual:f7f8b39f194d39a8e34058658074cf8a53479ece520a9dceb0bcb4d19c2deb23878f01a2483d99703b86594739a9ed182e1a68b4879e2cbe40d79da8f8bb5607#npm:27.0.6"],
             ["pinst", "npm:2.1.6"],
             ["prettier", "npm:2.3.2"],
@@ -3018,6 +3018,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["events", [
+        ["npm:3.3.0", {
+          "packageLocation": "./.yarn/cache/events-npm-3.3.0-c280bc7e48-56fa125670.zip/node_modules/events/",
+          "packageDependencies": [
+            ["events", "npm:3.3.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["execa", [
         ["npm:5.1.1", {
           "packageLocation": "./.yarn/cache/execa-npm-5.1.1-191347acf5-4286ade8cd.zip/node_modules/execa/",
@@ -3126,40 +3135,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["fb-watchman", "npm:2.0.1"],
             ["bser", "npm:2.1.1"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["fengari", [
-        ["npm:0.1.4", {
-          "packageLocation": "./.yarn/cache/fengari-npm-0.1.4-f367acc87f-d9a3887f87.zip/node_modules/fengari/",
-          "packageDependencies": [
-            ["fengari", "npm:0.1.4"],
-            ["readline-sync", "npm:1.4.10"],
-            ["sprintf-js", "npm:1.1.2"],
-            ["tmp", "npm:0.0.33"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["fengari-interop", [
-        ["npm:0.1.2", {
-          "packageLocation": "./.yarn/cache/fengari-interop-npm-0.1.2-04351ddcca-8115f237e2.zip/node_modules/fengari-interop/",
-          "packageDependencies": [
-            ["fengari-interop", "npm:0.1.2"]
-          ],
-          "linkType": "SOFT",
-        }],
-        ["virtual:5fe0c7c95576780d846c8fe155a5fe461ed32ef77813ac2ccf35bda1947d9b875c2436022b08e3e27832f7e9f21b3821786571270d36f3b69fdcc8496dd03cf7#npm:0.1.2", {
-          "packageLocation": "./.yarn/$$virtual/fengari-interop-virtual-a74ae56d1c/0/cache/fengari-interop-npm-0.1.2-04351ddcca-8115f237e2.zip/node_modules/fengari-interop/",
-          "packageDependencies": [
-            ["fengari-interop", "virtual:5fe0c7c95576780d846c8fe155a5fe461ed32ef77813ac2ccf35bda1947d9b875c2436022b08e3e27832f7e9f21b3821786571270d36f3b69fdcc8496dd03cf7#npm:0.1.2"],
-            ["@types/fengari", null],
-            ["fengari", "npm:0.1.4"]
-          ],
-          "packagePeers": [
-            "@types/fengari",
-            "fengari"
           ],
           "linkType": "HARD",
         }]
@@ -3634,36 +3609,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["redis-errors", "npm:1.2.0"],
             ["redis-parser", "npm:3.0.0"],
             ["standard-as-callback", "npm:2.1.0"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["ioredis-mock", [
-        ["npm:5.6.0", {
-          "packageLocation": "./.yarn/cache/ioredis-mock-npm-5.6.0-3db402e1c9-7e99a1f4d4.zip/node_modules/ioredis-mock/",
-          "packageDependencies": [
-            ["ioredis-mock", "npm:5.6.0"]
-          ],
-          "linkType": "SOFT",
-        }],
-        ["virtual:f7f8b39f194d39a8e34058658074cf8a53479ece520a9dceb0bcb4d19c2deb23878f01a2483d99703b86594739a9ed182e1a68b4879e2cbe40d79da8f8bb5607#npm:5.6.0", {
-          "packageLocation": "./.yarn/$$virtual/ioredis-mock-virtual-5fe0c7c955/0/cache/ioredis-mock-npm-5.6.0-3db402e1c9-7e99a1f4d4.zip/node_modules/ioredis-mock/",
-          "packageDependencies": [
-            ["ioredis-mock", "virtual:f7f8b39f194d39a8e34058658074cf8a53479ece520a9dceb0bcb4d19c2deb23878f01a2483d99703b86594739a9ed182e1a68b4879e2cbe40d79da8f8bb5607#npm:5.6.0"],
-            ["@types/ioredis", "npm:4.26.6"],
-            ["@types/redis-commands", null],
-            ["fengari", "npm:0.1.4"],
-            ["fengari-interop", "virtual:5fe0c7c95576780d846c8fe155a5fe461ed32ef77813ac2ccf35bda1947d9b875c2436022b08e3e27832f7e9f21b3821786571270d36f3b69fdcc8496dd03cf7#npm:0.1.2"],
-            ["ioredis", "npm:4.27.6"],
-            ["lodash", "npm:4.17.21"],
-            ["redis-commands", null],
-            ["standard-as-callback", "npm:2.1.0"]
-          ],
-          "packagePeers": [
-            "@types/ioredis",
-            "@types/redis-commands",
-            "ioredis",
-            "redis-commands"
           ],
           "linkType": "HARD",
         }]
@@ -4572,9 +4517,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint", "npm:7.30.0"],
             ["eslint-config-prettier", "virtual:f7f8b39f194d39a8e34058658074cf8a53479ece520a9dceb0bcb4d19c2deb23878f01a2483d99703b86594739a9ed182e1a68b4879e2cbe40d79da8f8bb5607#npm:8.3.0"],
             ["eslint-plugin-prettier", "virtual:f7f8b39f194d39a8e34058658074cf8a53479ece520a9dceb0bcb4d19c2deb23878f01a2483d99703b86594739a9ed182e1a68b4879e2cbe40d79da8f8bb5607#npm:3.4.0"],
+            ["events", "npm:3.3.0"],
             ["husky", "npm:7.0.1"],
             ["ioredis", "npm:4.27.6"],
-            ["ioredis-mock", "virtual:f7f8b39f194d39a8e34058658074cf8a53479ece520a9dceb0bcb4d19c2deb23878f01a2483d99703b86594739a9ed182e1a68b4879e2cbe40d79da8f8bb5607#npm:5.6.0"],
             ["jest", "virtual:f7f8b39f194d39a8e34058658074cf8a53479ece520a9dceb0bcb4d19c2deb23878f01a2483d99703b86594739a9ed182e1a68b4879e2cbe40d79da8f8bb5607#npm:27.0.6"],
             ["pinst", "npm:2.1.6"],
             ["prettier", "npm:2.3.2"],
@@ -5099,15 +5044,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["os-tmpdir", [
-        ["npm:1.0.2", {
-          "packageLocation": "./.yarn/cache/os-tmpdir-npm-1.0.2-e305b0689b-ca158a3c2e.zip/node_modules/os-tmpdir/",
-          "packageDependencies": [
-            ["os-tmpdir", "npm:1.0.2"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["p-each-series", [
         ["npm:2.2.0", {
           "packageLocation": "./.yarn/cache/p-each-series-npm-2.2.0-b9907a1ae6-d5a0896eb7.zip/node_modules/p-each-series/",
@@ -5433,15 +5369,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["safe-buffer", "npm:5.1.2"],
             ["string_decoder", "npm:1.1.1"],
             ["util-deprecate", "npm:1.0.2"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["readline-sync", [
-        ["npm:1.4.10", {
-          "packageLocation": "./.yarn/cache/readline-sync-npm-1.4.10-6809f52ca7-4746ee66b7.zip/node_modules/readline-sync/",
-          "packageDependencies": [
-            ["readline-sync", "npm:1.4.10"]
           ],
           "linkType": "HARD",
         }]
@@ -5810,13 +5737,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["sprintf-js", "npm:1.0.3"]
           ],
           "linkType": "HARD",
-        }],
-        ["npm:1.1.2", {
-          "packageLocation": "./.yarn/cache/sprintf-js-npm-1.1.2-ea16269a6d-50d2008328.zip/node_modules/sprintf-js/",
-          "packageDependencies": [
-            ["sprintf-js", "npm:1.1.2"]
-          ],
-          "linkType": "HARD",
         }]
       ]],
       ["ssri", [
@@ -6066,16 +5986,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/throat-npm-6.0.1-1308a37a10-c984a40b47.zip/node_modules/throat/",
           "packageDependencies": [
             ["throat", "npm:6.0.1"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["tmp", [
-        ["npm:0.0.33", {
-          "packageLocation": "./.yarn/cache/tmp-npm-0.0.33-bcbf65df2a-77666ca424.zip/node_modules/tmp/",
-          "packageDependencies": [
-            ["tmp", "npm:0.0.33"],
-            ["os-tmpdir", "npm:1.0.2"]
           ],
           "linkType": "HARD",
         }]
