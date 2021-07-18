@@ -2,14 +2,9 @@ import EventEmitter from 'events';
 
 export class RedisMock extends EventEmitter {
   private _subscribedChannelPattern?: string;
-  private _psubscribeError?: string;
 
   public get subscribedChannelPattern(): string | undefined {
     return this._subscribedChannelPattern;
-  }
-
-  public set psubscribeError(message: string) {
-    this._psubscribeError = message;
   }
 
   public pmessage(
@@ -20,14 +15,7 @@ export class RedisMock extends EventEmitter {
     this.emit('pmessage', pattern, prefixedChannelName, message);
   }
 
-  public psubscribe(
-    subscribedChannelPattern: string,
-    callback: (error?: { message: string }) => void
-  ): void {
+  public psubscribe(subscribedChannelPattern: string): void {
     this._subscribedChannelPattern = subscribedChannelPattern;
-
-    callback(
-      this._psubscribeError ? { message: this._psubscribeError } : undefined
-    );
   }
 }
