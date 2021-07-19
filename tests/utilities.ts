@@ -15,7 +15,21 @@ export class RedisMock extends EventEmitter {
     this.emit('pmessage', pattern, prefixedChannelName, message);
   }
 
-  public psubscribe(subscribedChannelPattern: string): void {
-    this._subscribedChannelPattern = subscribedChannelPattern;
+  public psubscribe(
+    subscribedChannelPattern: string,
+    errorCallback: (error: { message: string }) => void
+  ): void {
+    const invokeErrorCallbackPrefix = 'INVOKE_ERROR_CALLBACK_WITH_MESSAGE:';
+
+    if (subscribedChannelPattern.startsWith(invokeErrorCallbackPrefix)) {
+      errorCallback({
+        message: subscribedChannelPattern.substring(
+          invokeErrorCallbackPrefix.length,
+          subscribedChannelPattern.length - 1
+        ),
+      });
+    } else {
+      this._subscribedChannelPattern = subscribedChannelPattern;
+    }
   }
 }

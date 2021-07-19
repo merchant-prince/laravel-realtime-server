@@ -20,9 +20,19 @@ export default class RedisSubscriber {
    * Subscribe for messages on the Laravel application's redis server.
    *
    * @param callback The function to call when a message is published on redis.
+   * @param errorCallback The function to call if an error is thrown when calling 'callback'.
+   * @throws Error if 'psubscribe' fails.
    */
   public subscribe(
-    callback: (channelName: string, data: unknown) => void
+    callback: (channelName: string, data: unknown) => void,
+    errorCallback: (
+      errorMessage: string,
+      pmessageArguments: {
+        pattern: string;
+        prefixedChannelName: string;
+        jsonMessage: string;
+      }
+    ) => void
   ): void {
     this.redis.on('pmessage', (pattern, prefixedChannelName, jsonMessage) => {
       try {
@@ -31,21 +41,17 @@ export default class RedisSubscriber {
           JSON.parse(jsonMessage)
         );
       } catch (error) {
-        console.error(
-          `[${new Date().toLocaleString()}] Error during redis 'pmessage' processing: ${
-            error.message
-          }. (pattern: ${pattern}, channel: ${prefixedChannelName}, message: ${jsonMessage})`
-        );
+        errorCallback(error.message, {
+          pattern,
+          prefixedChannelName,
+          jsonMessage,
+        });
       }
     });
 
     this.redis.psubscribe(`${this.databasePrefix}*`, (error) => {
       if (error) {
-        console.error(
-          `[${new Date().toLocaleString()}] Could not subscribe to the redis server (${
-            error.message
-          })`
-        );
+        throw new Error(`[${new Date().toLocaleString()}] ${error.message}`);
       }
     });
   }

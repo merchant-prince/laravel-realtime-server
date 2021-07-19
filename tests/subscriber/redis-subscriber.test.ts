@@ -13,10 +13,15 @@ describe('testing the RedisSubscriber class', () => {
       databasePrefix
     );
 
-    redisSubscriber.subscribe((channelNameReceived) => {
-      expect(channelNameReceived).toBe(channelName);
-      done();
-    });
+    redisSubscriber.subscribe(
+      (channelNameReceived) => {
+        expect(channelNameReceived).toBe(channelName);
+        done();
+      },
+      (errorMessage) => {
+        throw new Error(errorMessage);
+      }
+    );
 
     // this assertion also (logically) checks if IORedis.Redis::psubscribe() was called as intended
     expect(redisMock.subscribedChannelPattern).toBe(`${databasePrefix}*`);
@@ -40,11 +45,72 @@ describe('testing the RedisSubscriber class', () => {
       specialAbility: 'nigeroooh!',
     };
 
-    redisSubscriber.subscribe((_channelName, data) => {
-      expect(data).toEqual(payload);
-      done();
-    });
+    redisSubscriber.subscribe(
+      (_channelName, data) => {
+        expect(data).toEqual(payload);
+        done();
+      },
+      (errorMessage) => {
+        throw new Error(errorMessage);
+      }
+    );
 
     redisMock.pmessage('*', 'Five-O', JSON.stringify(payload));
+  });
+
+  it("throws an error if 'psubscribe' fails", () => {
+    const errorMessage = 'Could not subscribe to the redis server';
+    const redisSubscriber = new RedisSubscriber(
+      new RedisMock() as unknown as IORedis.Redis,
+      `INVOKE_ERROR_CALLBACK_WITH_MESSAGE:${errorMessage}`
+    );
+
+    expect(() => {
+      redisSubscriber.subscribe(
+        () => undefined,
+        () => undefined
+      );
+    }).toThrowError(errorMessage);
+  });
+
+  it("calls 'errorCallback' if an error occurs when parsing the json data received from 'pmessage'", (done) => {
+    const databasePrefix = 'database-prefix-';
+    const redisMock = new RedisMock();
+    const redisSubscriber = new RedisSubscriber(
+      redisMock as unknown as IORedis.Redis,
+      databasePrefix
+    );
+
+    redisSubscriber.subscribe(
+      () => undefined,
+      (errorMessage) => {
+        expect(errorMessage).toContain('Unexpected end of JSON input');
+        done();
+      }
+    );
+
+    redisMock.pmessage('', '', '');
+  });
+
+  it("calls 'errorCallback' if an error occurs when calling 'callback'", (done) => {
+    const errorMessage = 'Something bad happened';
+    const databasePrefix = 'database-prefix-';
+    const redisMock = new RedisMock();
+    const redisSubscriber = new RedisSubscriber(
+      redisMock as unknown as IORedis.Redis,
+      databasePrefix
+    );
+
+    redisSubscriber.subscribe(
+      () => {
+        throw new Error(errorMessage);
+      },
+      (errorMessageReceived) => {
+        expect(errorMessageReceived).toContain(errorMessage);
+        done();
+      }
+    );
+
+    redisMock.pmessage('', '', JSON.stringify(null));
   });
 });
