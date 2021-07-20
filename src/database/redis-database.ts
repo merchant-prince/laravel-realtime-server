@@ -14,6 +14,11 @@ import IORedis from 'ioredis';
  *    -----------------------------------------------------------
  */
 export default class RedisDatabase {
+  /**
+   * Create a new class instance.
+   *
+   * @param redis The connection to the Laravel application's redis server.
+   */
   public constructor(protected readonly redis: IORedis.Redis) {}
 
   /**

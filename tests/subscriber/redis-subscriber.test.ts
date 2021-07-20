@@ -24,7 +24,9 @@ describe('testing the RedisSubscriber class', () => {
     );
 
     // this assertion also (logically) checks if IORedis.Redis::psubscribe() was called as intended
-    expect(redisMock['additionalData']['subscribedChannelPattern']).toBe(`${databasePrefix}*`);
+    expect(redisMock['additionalData']['subscribedChannelPattern']).toBe(
+      `${databasePrefix}*`
+    );
 
     redisMock.pmessage(
       `${databasePrefix}*`,
