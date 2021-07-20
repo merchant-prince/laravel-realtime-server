@@ -1,5 +1,5 @@
 import IORedis from 'ioredis';
-import { Redis } from '../utilities/mocks/redis';
+import Redis from '../utilities/mocks/redis';
 import RedisSubscriber from '../../src/subscriber/redis-subscriber';
 
 describe('testing the RedisSubscriber class', () => {
@@ -24,7 +24,7 @@ describe('testing the RedisSubscriber class', () => {
     );
 
     // this assertion also (logically) checks if IORedis.Redis::psubscribe() was called as intended
-    expect(redisMock.subscribedChannelPattern).toBe(`${databasePrefix}*`);
+    expect(redisMock['additionalData']['subscribedChannelPattern']).toBe(`${databasePrefix}*`);
 
     redisMock.pmessage(
       `${databasePrefix}*`,
