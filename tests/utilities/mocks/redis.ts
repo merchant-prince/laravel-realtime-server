@@ -1,18 +1,57 @@
 import EventEmitter from 'events';
 
-export class Redis extends EventEmitter {
-  private _subscribedChannelPattern?: string;
-
-  public get subscribedChannelPattern(): string | undefined {
-    return this._subscribedChannelPattern;
+export default class Redis extends EventEmitter {
+  public constructor(
+    private database: Record<string, unknown> = {},
+    private additionalData: Record<string, unknown> = {}
+  ) {
+    super();
   }
 
-  public pmessage(
-    pattern: string,
-    prefixedChannelName: string,
-    message: string
-  ): void {
-    this.emit('pmessage', pattern, prefixedChannelName, message);
+  public async get(key: string): Promise<unknown> {
+    return this.database[key];
+  }
+
+  public async set(key: string, value: unknown): Promise<void> {
+    this.database[key] = value;
+  }
+
+  public async del(key: string): Promise<void> {
+    delete this.database[key];
+  }
+
+  public async incr(key: string): Promise<number> {
+    if (!(key in this.database)) {
+      this.database[key] = 0;
+    }
+
+    return ++(this.database as { [key: string]: number })[key];
+  }
+
+  public async decr(key: string): Promise<number> {
+    return --(this.database as { [key: string]: number })[key];
+  }
+
+  public async smembers(key: string): Promise<unknown[]> {
+    return Array.from(
+      (this.database as { [key: string]: Set<unknown> })[key] ?? []
+    );
+  }
+
+  public async sadd(key: string, value: unknown): Promise<void> {
+    if (!(key in this.database)) {
+      this.database[key] = new Set();
+    }
+
+    (this.database as { [key: string]: Set<unknown> })[key].add(value);
+  }
+
+  public async srem(key: string, value: unknown): Promise<void> {
+    (this.database as { [key: string]: Set<unknown> })[key].delete(value);
+
+    if ((this.database as { [key: string]: Set<unknown> })[key].size === 0) {
+      delete this.database[key];
+    }
   }
 
   public psubscribe(
@@ -25,11 +64,22 @@ export class Redis extends EventEmitter {
       errorCallback({
         message: subscribedChannelPattern.substring(
           invokeErrorCallbackPrefix.length,
-          subscribedChannelPattern.length - 1
+          subscribedChannelPattern.endsWith('*')
+            ? subscribedChannelPattern.length - 1
+            : subscribedChannelPattern.length
         ),
       });
     } else {
-      this._subscribedChannelPattern = subscribedChannelPattern;
+      this.additionalData['subscribedChannelPattern'] =
+        subscribedChannelPattern;
     }
+  }
+
+  public pmessage(
+    pattern: string,
+    prefixedChannelName: string,
+    message: string
+  ): void {
+    this.emit('pmessage', pattern, prefixedChannelName, message);
   }
 }

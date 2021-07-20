@@ -5,7 +5,7 @@ describe('testing the redis mock', () => {
     expect.assertions(2);
 
     const redis = new Redis({
-      one: 1
+      one: 1,
     });
 
     expect(await redis.get('one')).toBe(1);
@@ -16,7 +16,7 @@ describe('testing the redis mock', () => {
     expect.assertions(2);
 
     const redis = new Redis({
-      foo: 'bar'
+      foo: 'bar',
     });
 
     await redis.set('foo', 'baz');
@@ -30,7 +30,7 @@ describe('testing the redis mock', () => {
     expect.assertions(1);
 
     const redis = new Redis({
-      baz: 'remove-me'
+      baz: 'remove-me',
     });
 
     await redis.del('baz');
@@ -41,7 +41,7 @@ describe('testing the redis mock', () => {
     expect.assertions(5);
 
     const redis = new Redis({
-      count: 44
+      count: 44,
     });
     const incrementedCount = await redis.incr('count');
 
@@ -57,7 +57,7 @@ describe('testing the redis mock', () => {
     expect.assertions(2);
 
     const redis = new Redis({
-      count: 2
+      count: 2,
     });
     const decrementedCount = await redis.decr('count');
 
@@ -69,7 +69,7 @@ describe('testing the redis mock', () => {
     expect.assertions(1);
 
     const redis = new Redis({
-      'tiny-set': new Set(['one', 'two'])
+      'tiny-set': new Set(['one', 'two']),
     });
 
     expect(await redis.smembers('tiny-set')).toEqual(['one', 'two']);
@@ -79,7 +79,7 @@ describe('testing the redis mock', () => {
     expect.assertions(3);
 
     const redis = new Redis({
-      'yu:gi:oh': new Set(['red', 'blue'])
+      'yu:gi:oh': new Set(['red', 'blue']),
     });
 
     await redis.sadd('yu:gi:oh', 'yellow');
@@ -92,7 +92,7 @@ describe('testing the redis mock', () => {
 
   it('removes data from a set in the database', async () => {
     const redis = new Redis({
-      trix: new Set([997, 5043])
+      trix: new Set([997, 5043]),
     });
 
     expect(await redis.smembers('trix')).toEqual([997, 5043]);
@@ -118,19 +118,33 @@ describe('testing the redis mock', () => {
     const errorMessage = 'An error occured';
     const redis = new Redis();
 
-    redis.psubscribe(`INVOKE_ERROR_CALLBACK_WITH_MESSAGE:${errorMessage}*`, (error) => {
-      expect(error.message).toBe(errorMessage);
-    });
+    redis.psubscribe(
+      `INVOKE_ERROR_CALLBACK_WITH_MESSAGE:${errorMessage}*`,
+      (error) => {
+        expect(error.message).toBe(errorMessage);
+      }
+    );
   });
 
   it("emits a 'pmessage' event when the 'pmessage' method is called", (done) => {
     const redis = new Redis();
-    const [pattern, prefixedChannelName, message] = ['*', 'private-one', 'hello, world!'];
+    const [pattern, prefixedChannelName, message] = [
+      '*',
+      'private-one',
+      'hello, world!',
+    ];
 
-    redis.on('pmessage', (receivedPattern, receivedPrefixedChannelName, receivedMessage) => {
-      expect([receivedPattern, receivedPrefixedChannelName, receivedMessage]).toEqual([pattern, prefixedChannelName, message]);
-      done();
-    });
+    redis.on(
+      'pmessage',
+      (receivedPattern, receivedPrefixedChannelName, receivedMessage) => {
+        expect([
+          receivedPattern,
+          receivedPrefixedChannelName,
+          receivedMessage,
+        ]).toEqual([pattern, prefixedChannelName, message]);
+        done();
+      }
+    );
 
     redis.pmessage(pattern, prefixedChannelName, message);
   });
