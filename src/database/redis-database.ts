@@ -3,15 +3,15 @@ import IORedis from 'ioredis';
 /**
  * This class has all the database-related methods for this project.
  * The database schema is as follows:
- *    -----------------------------------------------------------
- *    | Key                    | Value                          |
- *    ===========================================================
- *    | <channel_name: string> | SET(<user_data: string(json)>) |
- *    -----------------------------------------------------------
- *    | <user_key: string>     | <socket_count: integer>        |
- *    -----------------------------------------------------------
- *    | <socket_id: string>    | <user_data: string(json)>      |
- *    -----------------------------------------------------------
+ *    ---------------------------------------------------------------------
+ *    | Key                              | Value                          |
+ *    =====================================================================
+ *    | <channel_name: string>           | SET(<user_data: string(json)>) |
+ *    ---------------------------------------------------------------------
+ *    | <(channel_name:user_id): string> | <socket_count: integer>        |
+ *    ---------------------------------------------------------------------
+ *    | <socket_id: string>              | <user_data: string(json)>      |
+ *    ---------------------------------------------------------------------
  */
 export default class RedisDatabase {
   /**
@@ -28,8 +28,8 @@ export default class RedisDatabase {
    */
   public async getUserDataFromSocketId(
     socketId: string
-  ): Promise<Record<string, unknown>> {
-    return JSON.parse((await this.redis.get(socketId)) as string);
+  ): Promise<Record<string, unknown> | null> {
+    return JSON.parse((await this.redis.get(socketId)) ?? 'null');
   }
 
   /**
@@ -41,8 +41,8 @@ export default class RedisDatabase {
   public async associateUserDataToSocketId(
     userData: Record<string, unknown>,
     socketId: string
-  ): Promise<void> {
-    await this.redis.set(socketId, JSON.stringify(userData));
+  ): Promise<IORedis.Ok | null> {
+    return await this.redis.set(socketId, JSON.stringify(userData));
   }
 
   /**
@@ -50,8 +50,10 @@ export default class RedisDatabase {
    *
    * @param socketId The socket id to dissociate any user data from.
    */
-  public async dissociateUserDataFromSocketId(socketId: string): Promise<void> {
-    await this.redis.del(socketId);
+  public async dissociateUserDataFromSocketId(
+    socketId: string
+  ): Promise<number> {
+    return await this.redis.del(socketId);
   }
 
   /**
@@ -97,7 +99,7 @@ export default class RedisDatabase {
   }
 
   /**
-   * Get all the JSON parsed data of all the users present on a channel.
+   * Get all the JSON-parsed data of all the users present on a channel.
    *
    * @param channelName The channel to retrieve the users' data from.
    */
@@ -116,8 +118,8 @@ export default class RedisDatabase {
   public async addUserDataToChannelNameSet(
     userData: Record<string, unknown>,
     channelName: string
-  ): Promise<void> {
-    await this.redis.sadd(channelName, JSON.stringify(userData));
+  ): Promise<number> {
+    return await this.redis.sadd(channelName, JSON.stringify(userData));
   }
 
   /**
@@ -129,8 +131,8 @@ export default class RedisDatabase {
   public async removeUserDataFromChannelNameSet(
     userData: Record<string, unknown>,
     channelName: string
-  ): Promise<void> {
-    await this.redis.srem(channelName, JSON.stringify(userData));
+  ): Promise<number> {
+    return await this.redis.srem(channelName, JSON.stringify(userData));
   }
 
   /**
