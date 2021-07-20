@@ -12,12 +12,16 @@ export default class Redis extends EventEmitter {
     return this.database[key];
   }
 
-  public async set(key: string, value: unknown): Promise<void> {
+  public async set(key: string, value: unknown): Promise<number> {
     this.database[key] = value;
+
+    return 1;
   }
 
-  public async del(key: string): Promise<void> {
+  public async del(key: string): Promise<number> {
     delete this.database[key];
+
+    return 1;
   }
 
   public async incr(key: string): Promise<number> {
@@ -38,20 +42,24 @@ export default class Redis extends EventEmitter {
     );
   }
 
-  public async sadd(key: string, value: unknown): Promise<void> {
+  public async sadd(key: string, value: unknown): Promise<number> {
     if (!(key in this.database)) {
       this.database[key] = new Set();
     }
 
     (this.database as { [key: string]: Set<unknown> })[key].add(value);
+
+    return 1;
   }
 
-  public async srem(key: string, value: unknown): Promise<void> {
+  public async srem(key: string, value: unknown): Promise<number> {
     (this.database as { [key: string]: Set<unknown> })[key].delete(value);
 
     if ((this.database as { [key: string]: Set<unknown> })[key].size === 0) {
       delete this.database[key];
     }
+
+    return 1;
   }
 
   public psubscribe(
