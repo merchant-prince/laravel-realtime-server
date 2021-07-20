@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 
-export class RedisMock extends EventEmitter {
+export class Redis extends EventEmitter {
   private _subscribedChannelPattern?: string;
 
   public get subscribedChannelPattern(): string | undefined {

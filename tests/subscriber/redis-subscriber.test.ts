@@ -1,5 +1,5 @@
 import IORedis from 'ioredis';
-import { RedisMock } from '../utilities';
+import { Redis } from '../utilities/mocks/redis';
 import RedisSubscriber from '../../src/subscriber/redis-subscriber';
 
 describe('testing the RedisSubscriber class', () => {
@@ -7,7 +7,7 @@ describe('testing the RedisSubscriber class', () => {
   it('sanitizes the channel name before calling the callback with it', (done) => {
     const databasePrefix = 'database-prefix-';
     const channelName = 'OneTwo';
-    const redisMock = new RedisMock();
+    const redisMock = new Redis();
     const redisSubscriber = new RedisSubscriber(
       redisMock as unknown as IORedis.Redis,
       databasePrefix
@@ -34,7 +34,7 @@ describe('testing the RedisSubscriber class', () => {
   });
 
   it('parses the JSON message before calling the callback with it', (done) => {
-    const redisMock = new RedisMock();
+    const redisMock = new Redis();
     const redisSubscriber = new RedisSubscriber(
       redisMock as unknown as IORedis.Redis,
       ''
@@ -61,7 +61,7 @@ describe('testing the RedisSubscriber class', () => {
   it("throws an error if 'psubscribe' fails", () => {
     const errorMessage = 'Could not subscribe to the redis server';
     const redisSubscriber = new RedisSubscriber(
-      new RedisMock() as unknown as IORedis.Redis,
+      new Redis() as unknown as IORedis.Redis,
       `INVOKE_ERROR_CALLBACK_WITH_MESSAGE:${errorMessage}`
     );
 
@@ -75,7 +75,7 @@ describe('testing the RedisSubscriber class', () => {
 
   it("calls 'errorCallback' if an error occurs when parsing the json data received from 'pmessage'", (done) => {
     const databasePrefix = 'database-prefix-';
-    const redisMock = new RedisMock();
+    const redisMock = new Redis();
     const redisSubscriber = new RedisSubscriber(
       redisMock as unknown as IORedis.Redis,
       databasePrefix
@@ -95,7 +95,7 @@ describe('testing the RedisSubscriber class', () => {
   it("calls 'errorCallback' if an error occurs when calling 'callback'", (done) => {
     const errorMessage = 'Something bad happened';
     const databasePrefix = 'database-prefix-';
-    const redisMock = new RedisMock();
+    const redisMock = new Redis();
     const redisSubscriber = new RedisSubscriber(
       redisMock as unknown as IORedis.Redis,
       databasePrefix
