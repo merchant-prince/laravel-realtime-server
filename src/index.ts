@@ -1,3 +1,3 @@
-import Realtime from "./realtime";
+import Realtime from './realtime';
 
 export { Realtime };

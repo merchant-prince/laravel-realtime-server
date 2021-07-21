@@ -145,6 +145,6 @@ export default class RedisDatabase {
     channelName: string,
     userData: Record<string, unknown>
   ): string {
-    return `${channelName}:${userData.id}`;
+    return `${channelName}:${userData['id']}`;
   }
 }

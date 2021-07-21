@@ -47,15 +47,15 @@ export default class Redis extends EventEmitter {
       this.database[key] = new Set();
     }
 
-    (this.database as { [key: string]: Set<unknown> })[key].add(value);
+    (this.database as { [key: string]: Set<unknown> })[key]?.add(value);
 
     return 1;
   }
 
   public async srem(key: string, value: unknown): Promise<number> {
-    (this.database as { [key: string]: Set<unknown> })[key].delete(value);
+    (this.database as { [key: string]: Set<unknown> })[key]?.delete(value);
 
-    if ((this.database as { [key: string]: Set<unknown> })[key].size === 0) {
+    if ((this.database as { [key: string]: Set<unknown> })[key]?.size === 0) {
       delete this.database[key];
     }
 
