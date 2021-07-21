@@ -67,7 +67,7 @@ export default class RedisDatabase {
    * @param userData The data of the user to create/increase the socket-count for.
    * @param channelName The channel to increase the user's socket-count for.
    */
-  public async increaseOrCreateUserSocketCount(
+  public async createOrIncreaseUserSocketCount(
     userData: Record<string, unknown>,
     channelName: string
   ): Promise<number> {
@@ -84,7 +84,7 @@ export default class RedisDatabase {
    * @param userData The data of the user to decrease/remove the socket-count for.
    * @param channelName The channel to decrease the user's socket-count for.
    */
-  public async decreaseOrRemoveUserSocketCount(
+  public async removeOrDecreaseUserSocketCount(
     userData: Record<string, unknown>,
     channelName: string
   ): Promise<number> {
@@ -115,7 +115,7 @@ export default class RedisDatabase {
    * @param userData The user data to JSON stringify, and add to the set.
    * @param channelName The channel name set to add the data to.
    */
-  public async addUserDataToChannelNameSet(
+  public async addUserDataToChannel(
     userData: Record<string, unknown>,
     channelName: string
   ): Promise<number> {
@@ -128,7 +128,7 @@ export default class RedisDatabase {
    * @param userData The user data to remove from the set.
    * @param channelName The channel name set to remove the data from.
    */
-  public async removeUserDataFromChannelNameSet(
+  public async removeUserDataFromChannel(
     userData: Record<string, unknown>,
     channelName: string
   ): Promise<number> {
