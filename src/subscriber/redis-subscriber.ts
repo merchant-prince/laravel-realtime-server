@@ -51,7 +51,7 @@ export default class RedisSubscriber {
 
     this.redis.psubscribe(`${this.databasePrefix}*`, (error) => {
       if (error) {
-        throw new Error(`[${new Date().toLocaleString()}] ${error.message}`);
+        throw new Error(error.message);
       }
     });
   }
