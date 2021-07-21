@@ -2,8 +2,8 @@ import EventEmitter from 'events';
 
 export default class Redis extends EventEmitter {
   public constructor(
-    private database: Record<string, unknown> = {},
-    private additionalData: Record<string, unknown> = {}
+    private readonly database: Record<string, unknown> = {},
+    private readonly additionalData: Record<string, unknown> = {}
   ) {
     super();
   }

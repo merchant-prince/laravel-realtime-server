@@ -37,7 +37,7 @@ describe('testing the redis mock', () => {
     expect(await redis.get('baz')).toBeUndefined();
   });
 
-  it('increments the value associated to a key in the database', async () => {
+  it('increments the value associated with a key in the database', async () => {
     expect.assertions(5);
 
     const redis = new Redis({
@@ -53,7 +53,7 @@ describe('testing the redis mock', () => {
     expect(await redis.get('newCount')).toBe(1);
   });
 
-  it('decrements the value associated to a key in the database', async () => {
+  it('decrements the value associated with a key in the database', async () => {
     expect.assertions(2);
 
     const redis = new Redis({
