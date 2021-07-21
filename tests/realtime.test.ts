@@ -1,4 +1,4 @@
-import Realtime from "../src/realtime";
+import Realtime from '../src/realtime';
 
 describe('testing the Realtime class', () => {
   it('correct determines whether a channel is a presence channel', () => {
