@@ -17,7 +17,7 @@ export default class RedisDatabase {
   /**
    * Create a new class instance.
    *
-   * @param connection The connection to the Laravel application's redis server responsible for broadcasting.
+   * @param connection The connection to the application's redis server.
    */
   public constructor(public readonly connection: IORedis.Redis) {}
 
