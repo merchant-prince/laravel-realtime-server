@@ -96,14 +96,14 @@ describe('testing the RedisDatabase class', () => {
     ).toBeFalsy();
 
     expect(
-      await redisDatabase.increaseOrCreateUserSocketCount(userData, channelName)
+      await redisDatabase.createOrIncreaseUserSocketCount(userData, channelName)
     ).toBe(1);
     expect(
       redis['database'][RedisDatabase['userKey'](channelName, userData)]
     ).toBe(1);
 
     expect(
-      await redisDatabase.increaseOrCreateUserSocketCount(userData, channelName)
+      await redisDatabase.createOrIncreaseUserSocketCount(userData, channelName)
     ).toBe(2);
     expect(
       redis['database'][RedisDatabase['userKey'](channelName, userData)]
@@ -124,14 +124,14 @@ describe('testing the RedisDatabase class', () => {
     const redisDatabase = new RedisDatabase(redis as unknown as IORedis.Redis);
 
     expect(
-      await redisDatabase.decreaseOrRemoveUserSocketCount(userData, channelName)
+      await redisDatabase.removeOrDecreaseUserSocketCount(userData, channelName)
     ).toBe(1);
     expect(
       redis['database'][RedisDatabase['userKey'](channelName, userData)]
     ).toBe(1);
 
     expect(
-      await redisDatabase.decreaseOrRemoveUserSocketCount(userData, channelName)
+      await redisDatabase.removeOrDecreaseUserSocketCount(userData, channelName)
     ).toBe(0);
     expect(
       RedisDatabase['userKey'](channelName, userData) in redis['database']
@@ -172,7 +172,7 @@ describe('testing the RedisDatabase class', () => {
     });
     const redisDatabase = new RedisDatabase(redis as unknown as IORedis.Redis);
 
-    await redisDatabase.addUserDataToChannelNameSet(userData, channelName);
+    await redisDatabase.addUserDataToChannel(userData, channelName);
 
     expect(redis['database'][channelName]).toContain(JSON.stringify(userData));
   });
@@ -193,7 +193,7 @@ describe('testing the RedisDatabase class', () => {
     });
     const redisDatabase = new RedisDatabase(redis as unknown as IORedis.Redis);
 
-    await redisDatabase.removeUserDataFromChannelNameSet(userData, channelName);
+    await redisDatabase.removeUserDataFromChannel(userData, channelName);
 
     expect(redis['database'][channelName]).not.toContain(
       JSON.stringify(userData)
