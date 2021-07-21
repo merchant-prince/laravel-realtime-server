@@ -17,23 +17,23 @@ export default class RedisDatabase {
   /**
    * Create a new class instance.
    *
-   * @param redis The connection to the Laravel application's redis server.
+   * @param connection The connection to the Laravel application's redis server responsible for broadcasting.
    */
-  public constructor(protected readonly redis: IORedis.Redis) {}
+  public constructor(public readonly connection: IORedis.Redis) {}
 
   /**
-   * Get the user data associated to a socket id.
+   * Get the user data associated with a socket id.
    *
    * @param socketId The socket id associated with the user data.
    */
   public async getUserDataFromSocketId(
     socketId: string
   ): Promise<Record<string, unknown> | null> {
-    return JSON.parse((await this.redis.get(socketId)) ?? 'null');
+    return JSON.parse((await this.connection.get(socketId)) ?? 'null');
   }
 
   /**
-   * Associate a socket id with the data of a user.
+   * Associate a socket id with the (JSON stringified) data of a user.
    *
    * @param userData The user data to associate to the socket id.
    * @param socketId The socket id to associate to the user data.
@@ -42,7 +42,7 @@ export default class RedisDatabase {
     userData: Record<string, unknown>,
     socketId: string
   ): Promise<IORedis.Ok | null> {
-    return await this.redis.set(socketId, JSON.stringify(userData));
+    return await this.connection.set(socketId, JSON.stringify(userData));
   }
 
   /**
@@ -53,12 +53,12 @@ export default class RedisDatabase {
   public async dissociateUserDataFromSocketId(
     socketId: string
   ): Promise<number> {
-    return await this.redis.del(socketId);
+    return await this.connection.del(socketId);
   }
 
   /**
    * Increase the current socket counter, or create a new socket counter for the user if one did not exist already.
-   * The return value is always '1' if the socket counter was created.
+   * The return value is always '1' if the socket counter was just created.
    * @see https://redis.io/commands/incr
    *
    * This can be used to check if the user is present on a given channel. If the return value is '1', the user was
@@ -71,15 +71,17 @@ export default class RedisDatabase {
     userData: Record<string, unknown>,
     channelName: string
   ): Promise<number> {
-    return await this.redis.incr(RedisDatabase.userKey(channelName, userData));
+    return await this.connection.incr(
+      RedisDatabase.userKey(channelName, userData)
+    );
   }
 
   /**
    * Decrease the current socket counter of the user. If the counter reaches 0, delete the counter.
-   * The return value is always '0' if the socket counter was deleted.
+   * The return value is always '0' if the socket counter has just been deleted.
    *
-   * This can be used to check if the user is present on a given channel. If the return value is '0', the user was
-   * previously present on the channel. Otherwise, the user was absent from the channel.
+   * This can be used to check if the user is present on a given channel. If the return value is '0', the user is no
+   * longer present on the channel. Otherwise, the user is still here.
    *
    * @param userData The data of the user to decrease/remove the socket-count for.
    * @param channelName The channel to decrease the user's socket-count for.
@@ -89,10 +91,12 @@ export default class RedisDatabase {
     channelName: string
   ): Promise<number> {
     const userKey = RedisDatabase.userKey(channelName, userData);
-    const socketCount = await this.redis.decr(userKey);
+    let socketCount = await this.connection.decr(userKey);
 
-    if (socketCount === 0) {
-      await this.redis.del(userKey);
+    if (socketCount <= 0) {
+      socketCount = 0;
+
+      await this.connection.del(userKey);
     }
 
     return socketCount;
@@ -104,7 +108,7 @@ export default class RedisDatabase {
    * @param channelName The channel to retrieve the users' data from.
    */
   public async getChannelMembers(channelName: string): Promise<unknown[]> {
-    return (await this.redis.smembers(channelName))
+    return (await this.connection.smembers(channelName))
       .filter((rawUserData) => Boolean(rawUserData))
       .map((rawUserData) => JSON.parse(rawUserData));
   }
@@ -113,26 +117,26 @@ export default class RedisDatabase {
    * Add a user's data to a set identified by the channel's name.
    *
    * @param userData The user data to JSON stringify, and add to the set.
-   * @param channelName The channel name set to add the data to.
+   * @param channelName The channel-name set to add the data to.
    */
   public async addUserDataToChannel(
     userData: Record<string, unknown>,
     channelName: string
   ): Promise<number> {
-    return await this.redis.sadd(channelName, JSON.stringify(userData));
+    return await this.connection.sadd(channelName, JSON.stringify(userData));
   }
 
   /**
    * Remove a user's data from a set identified by the channel's name.
    *
    * @param userData The user data to remove from the set.
-   * @param channelName The channel name set to remove the data from.
+   * @param channelName The channel-name set to remove the data from.
    */
   public async removeUserDataFromChannel(
     userData: Record<string, unknown>,
     channelName: string
   ): Promise<number> {
-    return await this.redis.srem(channelName, JSON.stringify(userData));
+    return await this.connection.srem(channelName, JSON.stringify(userData));
   }
 
   /**
