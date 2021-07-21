@@ -52,6 +52,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pinst", "npm:2.1.6"],
             ["prettier", "npm:2.3.2"],
             ["rollup", "npm:2.53.2"],
+            ["rollup-plugin-dts", "virtual:f7f8b39f194d39a8e34058658074cf8a53479ece520a9dceb0bcb4d19c2deb23878f01a2483d99703b86594739a9ed182e1a68b4879e2cbe40d79da8f8bb5607#npm:3.0.2"],
             ["socket.io", "npm:4.1.3"],
             ["ts-jest", "virtual:f7f8b39f194d39a8e34058658074cf8a53479ece520a9dceb0bcb4d19c2deb23878f01a2483d99703b86594739a9ed182e1a68b4879e2cbe40d79da8f8bb5607#npm:27.0.3"],
             ["tslib", "npm:2.3.0"],
@@ -4524,6 +4525,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pinst", "npm:2.1.6"],
             ["prettier", "npm:2.3.2"],
             ["rollup", "npm:2.53.2"],
+            ["rollup-plugin-dts", "virtual:f7f8b39f194d39a8e34058658074cf8a53479ece520a9dceb0bcb4d19c2deb23878f01a2483d99703b86594739a9ed182e1a68b4879e2cbe40d79da8f8bb5607#npm:3.0.2"],
             ["socket.io", "npm:4.1.3"],
             ["ts-jest", "virtual:f7f8b39f194d39a8e34058658074cf8a53479ece520a9dceb0bcb4d19c2deb23878f01a2483d99703b86594739a9ed182e1a68b4879e2cbe40d79da8f8bb5607#npm:27.0.3"],
             ["tslib", "npm:2.3.0"],
@@ -4631,6 +4633,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["lru-cache", "npm:6.0.0"],
             ["yallist", "npm:4.0.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["magic-string", [
+        ["npm:0.25.7", {
+          "packageLocation": "./.yarn/cache/magic-string-npm-0.25.7-0a0bd9c864-4b70c13eb2.zip/node_modules/magic-string/",
+          "packageDependencies": [
+            ["magic-string", "npm:0.25.7"],
+            ["sourcemap-codec", "npm:1.4.8"]
           ],
           "linkType": "HARD",
         }]
@@ -5503,6 +5515,34 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["rollup-plugin-dts", [
+        ["npm:3.0.2", {
+          "packageLocation": "./.yarn/cache/rollup-plugin-dts-npm-3.0.2-b244a99ce5-11e32d2476.zip/node_modules/rollup-plugin-dts/",
+          "packageDependencies": [
+            ["rollup-plugin-dts", "npm:3.0.2"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:f7f8b39f194d39a8e34058658074cf8a53479ece520a9dceb0bcb4d19c2deb23878f01a2483d99703b86594739a9ed182e1a68b4879e2cbe40d79da8f8bb5607#npm:3.0.2", {
+          "packageLocation": "./.yarn/$$virtual/rollup-plugin-dts-virtual-7730c756fa/0/cache/rollup-plugin-dts-npm-3.0.2-b244a99ce5-11e32d2476.zip/node_modules/rollup-plugin-dts/",
+          "packageDependencies": [
+            ["rollup-plugin-dts", "virtual:f7f8b39f194d39a8e34058658074cf8a53479ece520a9dceb0bcb4d19c2deb23878f01a2483d99703b86594739a9ed182e1a68b4879e2cbe40d79da8f8bb5607#npm:3.0.2"],
+            ["@babel/code-frame", "npm:7.14.5"],
+            ["@types/rollup", null],
+            ["@types/typescript", null],
+            ["magic-string", "npm:0.25.7"],
+            ["rollup", "npm:2.53.2"],
+            ["typescript", "patch:typescript@npm%3A4.3.5#builtin<compat/typescript>::version=4.3.5&hash=ddfc1b"]
+          ],
+          "packagePeers": [
+            "@types/rollup",
+            "@types/typescript",
+            "rollup",
+            "typescript"
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["run-parallel", [
         ["npm:1.2.0", {
           "packageLocation": "./.yarn/cache/run-parallel-npm-1.2.0-3f47ff2034-3d12f0251a.zip/node_modules/run-parallel/",
@@ -5726,6 +5766,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["source-map-support", "npm:0.5.19"],
             ["buffer-from", "npm:1.1.1"],
             ["source-map", "npm:0.6.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["sourcemap-codec", [
+        ["npm:1.4.8", {
+          "packageLocation": "./.yarn/cache/sourcemap-codec-npm-1.4.8-3a1a9e60b1-4d56d1232a.zip/node_modules/sourcemap-codec/",
+          "packageDependencies": [
+            ["sourcemap-codec", "npm:1.4.8"]
           ],
           "linkType": "HARD",
         }]
