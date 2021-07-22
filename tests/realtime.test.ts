@@ -163,7 +163,57 @@ describe('testing the Realtime class', () => {
     socketIoServer.close();
   });
 
-  // test("a client socket whose socket id is in an event (published on the Laravel application's redis server) does not receive said event", async () => {});
+  test("a client socket whose id is in an event - published on the Laravel application's redis server - does not receive said event", async () => {
+    const { socketPairs, socketIoServer, realtime } =
+      await setupRealtimeServerAndSocketIoClients(2);
+    const channelName = 'Vash-The-Stampede';
+
+    await Promise.all(
+      socketPairs.map(
+        ({ server, client }) =>
+          new Promise<void>((resolve) => {
+            server.on('subscribe', resolve);
+            client.emit('subscribe', channelName);
+          })
+      )
+    );
+
+    const eventData = {
+      event: 'App\\Events\\WhoAmI',
+      socket: socketPairs[0]?.client.id,
+      data: {
+        socket: socketPairs[0]?.client.id,
+        id: 666,
+        message: 'All hail Stan!',
+      },
+    };
+
+    await new Promise<void>((resolve, reject) => {
+      socketPairs[0]?.client.on(eventData.event, () => {
+        reject(
+          'This socket.io client is not supposed to receive the event because the event data contains its socket id (it was broadcasted from the Laravel application).'
+        );
+      });
+
+      socketPairs[1]?.client.on(eventData.event, (payload) => {
+        expect(payload).toEqual({
+          id: eventData.data.id,
+          message: eventData.data.message,
+        });
+
+        resolve();
+      });
+
+      (realtime.subscriber.connection as unknown as RedisMock).pmessage(
+        '',
+        channelName,
+        JSON.stringify(eventData)
+      );
+    });
+
+    socketPairs.forEach(({ client }) => client.close());
+    socketIoServer.close();
+  });
 
   // presence;joining + presence:subscribed
   // --> db data
