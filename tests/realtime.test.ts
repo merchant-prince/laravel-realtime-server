@@ -3,7 +3,7 @@ import { setupRealtimeServerAndSocketIoClients } from './utilities/setup';
 
 describe('testing the Realtime class', () => {
   // Realtime.isPresenceChannel
-  it('correct determines whether a channel is a presence channel', () => {
+  it('correctly determines whether a channel is a presence channel', () => {
     const presenceChannel = 'presence-One.Two';
     const nonPresenceChannel = 'private-nope';
 

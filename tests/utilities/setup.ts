@@ -9,6 +9,7 @@ import Redis from './mocks/redis';
  * Set up the Socket.io server and client.
  *
  * @param clientCount The number of clients to connect to the websocket server.
+ * @param options Additional options used in the setup.
  */
 export const setupRealtimeServerAndSocketIoClients = (
   clientCount: number,
