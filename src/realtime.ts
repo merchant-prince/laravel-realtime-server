@@ -14,7 +14,7 @@ export default class Realtime {
   /**
    * The socket.io namespace which will be used for all socket.io operations.
    */
-  public readonly io: SocketIoNamespace;
+  public readonly ioNsp: SocketIoNamespace;
 
   /**
    * The object responsible for 'subscribing' to 'pmessage' events from the Laravel application's Redis server.
@@ -44,7 +44,7 @@ export default class Realtime {
       namespace: string;
     };
   }) {
-    this.io = options.websocket.connection.of(options.websocket.namespace);
+    this.ioNsp = options.websocket.connection.of(options.websocket.namespace);
     this.database = new RedisDatabase(options.database.connection);
     this.subscriber = new RedisSubscriber(
       options.subscriber.connection,
@@ -59,7 +59,7 @@ export default class Realtime {
    * channels, and start listening for 'pmessage's.
    */
   protected initializeWebsocketsAndStartListeningForRedisEvents(): void {
-    this.io.on('connection', (socket) => {
+    this.ioNsp.on('connection', (socket) => {
       socket.on('subscribe', async (channelName, userData?) => {
         await this.subscribeSocketToChannel(socket, channelName, userData);
       });
@@ -116,7 +116,7 @@ export default class Realtime {
           channelName
         );
 
-        this.io.to(channelName).emit('presence:subscribed', channelMembersData);
+        this.ioNsp.to(channelName).emit('presence:subscribed', channelMembersData);
       }
     }
   }
@@ -254,9 +254,9 @@ export default class Realtime {
           };
 
           if (typeof socketId === 'string') {
-            this.io.sockets.get(socketId)?.to(channelName).emit(event, payload);
+            this.ioNsp.sockets.get(socketId)?.to(channelName).emit(event, payload);
           } else {
-            this.io.to(channelName).emit(event, payload);
+            this.ioNsp.to(channelName).emit(event, payload);
           }
         },
         (errorMessage, pmessageArguments) => {
