@@ -11,7 +11,22 @@ import Redis from './mocks/redis';
  * @param clientCount The number of clients to connect to the websocket server.
  */
 export const setupRealtimeServerAndSocketIoClients = (
-  clientCount: number
+  clientCount: number,
+  options: {
+    realtime: {
+      prefix: string;
+    };
+    websocket: {
+      namespace: string;
+    };
+  } = {
+    realtime: {
+      prefix: '',
+    },
+    websocket: {
+      namespace: '/',
+    },
+  }
 ): Promise<{
   socketPairs: { server: ServerSocket; client: ClientSocket }[];
   socketIoServer: SocketIoServer;
@@ -25,11 +40,11 @@ export const setupRealtimeServerAndSocketIoClients = (
     },
     subscriber: {
       connection: new Redis() as unknown as IORedis.Redis,
-      prefix: '',
+      prefix: options.realtime.prefix,
     },
     websocket: {
       connection: socketIoServer,
-      namespace: '/',
+      namespace: options.websocket.namespace,
     },
   });
 
@@ -43,35 +58,34 @@ export const setupRealtimeServerAndSocketIoClients = (
         );
       }
 
-      const socketPairs: { server: ServerSocket; client: ClientSocket }[] =
-        await Promise.all(
-          // create 'clientCount' pairs of server & client socket.io sockets
-          Array(clientCount)
-            .fill(null)
-            .map(
-              () =>
-                new Promise<{ server: ServerSocket; client: ClientSocket }>(
-                  (resolve) => {
-                    let serverSocket: ServerSocket;
+      const socketPairs = await Promise.all(
+        // create 'clientCount' pairs of server & client socket.io sockets
+        Array(clientCount)
+          .fill(null)
+          .map(
+            () =>
+              new Promise<{ server: ServerSocket; client: ClientSocket }>(
+                (resolve) => {
+                  let serverSocket: ServerSocket;
 
-                    socketIoServer.on('connect', (socket) => {
-                      serverSocket = socket;
+                  socketIoServer.on('connect', (socket) => {
+                    serverSocket = socket;
+                  });
+
+                  const clientSocket = SocketIoClient(
+                    `http://localhost:${address.port}`
+                  );
+
+                  clientSocket.on('connect', () => {
+                    resolve({
+                      server: serverSocket,
+                      client: clientSocket,
                     });
-
-                    const clientSocket = SocketIoClient(
-                      `http://localhost:${address.port}`
-                    );
-
-                    clientSocket.on('connect', () => {
-                      resolve({
-                        server: serverSocket,
-                        client: clientSocket,
-                      });
-                    });
-                  }
-                )
-            )
-        );
+                  });
+                }
+              )
+          )
+      );
 
       resolve({
         socketPairs,
