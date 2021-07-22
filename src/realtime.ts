@@ -253,7 +253,6 @@ export default class Realtime {
           } = data as {
             event: string;
             data: { socket: string; [key: string]: unknown };
-            socket: string;
           };
 
           if (typeof socketId === 'string') {
