@@ -1,24 +1,7 @@
 import Realtime from '../src/realtime';
-import { setupRealtimeServerAndSocketIoClient } from './utilities/setup';
-import { Server as SocketIoServer, Socket as ServerSocket } from 'socket.io';
-import { Socket as ClientSocket } from 'socket.io-client';
+import { setupRealtimeServerAndSocketIoClients } from './utilities/setup';
 
 describe('testing the Realtime class', () => {
-  let realtime: Realtime;
-  let socketIoServer: SocketIoServer;
-  let serverSocket: ServerSocket;
-  let clientSocket: ClientSocket;
-
-  beforeEach(async () => {
-    ({ serverSocket, clientSocket, socketIoServer, realtime } =
-      await setupRealtimeServerAndSocketIoClient());
-  });
-
-  afterEach(() => {
-    socketIoServer.close();
-    clientSocket.close();
-  });
-
   // Realtime.isPresenceChannel
   it('correct determines whether a channel is a presence channel', () => {
     const presenceChannel = 'presence-One.Two';
@@ -29,9 +12,15 @@ describe('testing the Realtime class', () => {
   });
 
   // constructor
-  it('sets up realtime successfully', () => {
-    realtime; // @todo: setup multiple clients.
-    expect(serverSocket.connected).toBeTruthy();
-    expect(clientSocket.connected).toBeTruthy();
+  it('sets up realtime successfully', async () => {
+    const { socketPairs, socketIoServer } =
+      await setupRealtimeServerAndSocketIoClients(2);
+    expect(socketPairs[0]?.server.connected).toBeTruthy();
+    expect(socketPairs[0]?.client.connected).toBeTruthy();
+    expect(socketPairs[1]?.server.connected).toBeTruthy();
+    expect(socketPairs[1]?.client.connected).toBeTruthy();
+    socketPairs[0]?.client.close();
+    socketPairs[1]?.client.close();
+    socketIoServer.close();
   });
 });
