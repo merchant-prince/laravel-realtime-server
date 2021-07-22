@@ -44,7 +44,7 @@ describe('testing the Realtime class', () => {
       await setupRealtimeServerAndSocketIoClients();
     const channelName = 'TwoThree';
 
-    await new Promise<void>((resolve) => {
+    await new Promise((resolve) => {
       socketPairs[0]?.server.on('subscribe', resolve);
       socketPairs[0]?.client.emit('subscribe', channelName);
     });
@@ -67,6 +67,8 @@ describe('testing the Realtime class', () => {
   });
 
   test('client events are broadcasted to other listening client sockets', async () => {
+    expect.assertions(1);
+
     const { socketPairs, socketIoServer } =
       await setupRealtimeServerAndSocketIoClients({ client: { count: 2 } });
     const channelName = 'three-four';
@@ -78,7 +80,7 @@ describe('testing the Realtime class', () => {
     await Promise.all(
       socketPairs.map(
         ({ server, client }) =>
-          new Promise<void>((resolve) => {
+          new Promise((resolve) => {
             server.on('subscribe', resolve);
             client.emit('subscribe', channelName);
           })
@@ -112,6 +114,8 @@ describe('testing the Realtime class', () => {
   });
 
   test("only a client socket subscribed to a channel receives an event published on that channel (by the Laravel application's redis server)", async () => {
+    expect.assertions(1);
+
     const { socketPairs, socketIoServer, realtime } =
       await setupRealtimeServerAndSocketIoClients({ client: { count: 2 } });
     const channelName = 'Four.Five';
@@ -126,11 +130,11 @@ describe('testing the Realtime class', () => {
     };
 
     await Promise.all([
-      new Promise<void>((resolve) => {
+      new Promise((resolve) => {
         socketPairs[0]?.server.on('subscribe', resolve);
         socketPairs[0]?.client.emit('subscribe', channelName);
       }),
-      new Promise<void>((resolve) => {
+      new Promise((resolve) => {
         socketPairs[1]?.server.on('subscribe', resolve);
         socketPairs[1]?.client.emit('subscribe', 'no-no-no');
       }),
@@ -164,6 +168,8 @@ describe('testing the Realtime class', () => {
   });
 
   test("a client socket whose id is in an event - published on the Laravel application's redis server - does not receive said event", async () => {
+    expect.assertions(1);
+
     const { socketPairs, socketIoServer, realtime } =
       await setupRealtimeServerAndSocketIoClients({ client: { count: 2 } });
     const channelName = 'Vash-The-Stampede';
@@ -171,7 +177,7 @@ describe('testing the Realtime class', () => {
     await Promise.all(
       socketPairs.map(
         ({ server, client }) =>
-          new Promise<void>((resolve) => {
+          new Promise((resolve) => {
             server.on('subscribe', resolve);
             client.emit('subscribe', channelName);
           })
@@ -215,60 +221,50 @@ describe('testing the Realtime class', () => {
     socketIoServer.close();
   });
 
-  // presence;joining + presence:subscribed
-  // --> db data
-  // test('presence channel subscription (~e2e)', async () => {
-  //   const { socketPairs, socketIoServer, realtime } =
-  //     await setupRealtimeServerAndSocketIoClients({client: {count: 2}});
-  //   const channelName = 'presence-general-chat';
+  test('the correct events are sent when a user joins a presence channel', async () => {
+    expect.assertions(3);
 
-  //   await Promise.all(
-  //     socketPairs.map(
-  //       ({ server, client }) =>
-  //         new Promise<void>((resolve) => {
-  //           server.on('subscribe', resolve);
-  //           client.emit('subscribe', channelName);
-  //         })
-  //     )
-  //   );
+    const channelName = 'presence-general-chat';
+    const { socketPairs, socketIoServer } =
+      await setupRealtimeServerAndSocketIoClients({ client: { count: 2 } });
+    const userData = { id: 1, name: 'One', email: 'one@one.one' };
 
-  //   const eventData = {
-  //     event: 'App\\Events\\WhoAmI',
-  //     socket: socketPairs[0]?.client.id,
-  //     data: {
-  //       socket: socketPairs[0]?.client.id,
-  //       id: 666,
-  //       message: 'All hail Stan!',
-  //     },
-  //   };
+    await Promise.all([
+      Promise.all([
+        new Promise((resolve) => {
+          socketPairs[0]?.server.on('subscribe', resolve);
+          socketPairs[0]?.client.emit('subscribe', channelName);
+        }),
+        new Promise<void>((resolve) => {
+          socketPairs[1]?.server.on('subscribe', () => resolve());
+          socketPairs[1]?.client.emit('subscribe', channelName, userData);
+        }),
+      ]),
+      Promise.all([
+        new Promise<void>((resolve) => {
+          socketPairs[0]?.client.on('presence:joining', (receivedUserData) => {
+            expect(receivedUserData).toEqual(userData);
+            resolve();
+          });
+        }),
 
-  //   await new Promise<void>((resolve, reject) => {
-  //     socketPairs[0]?.client.on(eventData.event, () => {
-  //       reject(
-  //         'This socket.io client is not supposed to receive the event because the event data contains its socket id (it was broadcasted from the Laravel application).'
-  //       );
-  //     });
+        Promise.all(
+          socketPairs.map(
+            async ({ client }) =>
+              new Promise<void>((resolve) => {
+                client.on('presence:subscribed', (membersData) => {
+                  expect(membersData).toEqual([userData]);
+                  resolve();
+                });
+              })
+          )
+        ),
+      ]),
+    ]);
 
-  //     socketPairs[1]?.client.on(eventData.event, (payload) => {
-  //       expect(payload).toEqual({
-  //         id: eventData.data.id,
-  //         message: eventData.data.message,
-  //       });
-
-  //       resolve();
-  //     });
-
-  //     (realtime.subscriber.connection as unknown as RedisMock).pmessage(
-  //       '',
-  //       channelName,
-  //       JSON.stringify(eventData)
-  //     );
-  //   });
-
-  //   socketPairs.forEach(({ client }) => client.close());
-  //   socketIoServer.close();
-
-  // });
+    socketPairs.forEach(({ client }) => client.close());
+    socketIoServer.close();
+  });
 
   // // presence;leaving + presence:subscribed
   // // --> db data
