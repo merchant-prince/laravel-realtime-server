@@ -266,6 +266,39 @@ describe('testing the Realtime class', () => {
     socketIoServer.close();
   });
 
+  test('the correct data is stored in the database when a user joins a presence channel', async () => {
+    expect.assertions(3);
+
+    const channelName = 'presence-general-chat';
+    const { socketPairs, socketIoServer, realtime } =
+      await setupRealtimeServerAndSocketIoClients();
+    const userData = { id: 1, name: 'One', email: 'one@one.one' };
+
+    await new Promise<void>((resolve) => {
+      socketPairs[0]?.server.on('subscribe', () => resolve());
+      socketPairs[0]?.client.emit('subscribe', channelName, userData);
+    });
+
+    const socketIdUserData = await realtime.database.getUserDataFromSocketId(
+      socketPairs[0]?.client.id as string
+    );
+    expect(socketIdUserData).toEqual(userData);
+
+    const channelSet = await realtime.database.getChannelMembers(channelName);
+    expect(channelSet.map((userData) => JSON.stringify(userData))).toContain(
+      JSON.stringify(userData)
+    );
+
+    const socketCount = await realtime.database.createOrIncreaseUserSocketCount(
+      userData,
+      channelName
+    );
+    expect(socketCount).toBe(2);
+
+    socketPairs.forEach(({ client }) => client.close());
+    socketIoServer.close();
+  });
+
   // // presence;leaving + presence:subscribed
   // // --> db data
 
