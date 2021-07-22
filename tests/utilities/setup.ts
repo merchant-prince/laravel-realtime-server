@@ -8,31 +8,38 @@ import Redis from './mocks/redis';
 /**
  * Set up the Socket.io server and client.
  *
- * @param clientCount The number of clients to connect to the websocket server.
  * @param options Additional options used in the setup.
  */
-export const setupRealtimeServerAndSocketIoClients = (
-  clientCount: number,
-  options: {
-    realtime: {
-      prefix: string;
-    };
-    websocket: {
-      namespace: string;
-    };
-  } = {
-    realtime: {
-      prefix: '',
-    },
-    websocket: {
-      namespace: '/',
-    },
-  }
-): Promise<{
+export const setupRealtimeServerAndSocketIoClients = (options?: {
+  client?: {
+    count: number; // the number of clients to connect to the websocket server
+  };
+  realtime?: {
+    prefix: string;
+  };
+  websocket?: {
+    namespace: string;
+  };
+}): Promise<{
   socketPairs: { server: ServerSocket; client: ClientSocket }[];
   socketIoServer: SocketIoServer;
   realtime: Realtime;
 }> => {
+  const normalizedOptions = Object.assign(
+    {},
+    {
+      client: {
+        count: 1,
+      },
+      realtime: {
+        prefix: '',
+      },
+      websocket: {
+        namespace: '/',
+      },
+    },
+    options
+  );
   const httpServer = createHttpServer();
   const socketIoServer = new SocketIoServer(httpServer, { serveClient: false });
   const realtime = new Realtime({
@@ -41,11 +48,11 @@ export const setupRealtimeServerAndSocketIoClients = (
     },
     subscriber: {
       connection: new Redis() as unknown as IORedis.Redis,
-      prefix: options.realtime.prefix,
+      prefix: normalizedOptions.realtime.prefix,
     },
     websocket: {
       connection: socketIoServer,
-      namespace: options.websocket.namespace,
+      namespace: normalizedOptions.websocket.namespace,
     },
   });
 
@@ -61,7 +68,7 @@ export const setupRealtimeServerAndSocketIoClients = (
 
       const socketPairs = await Promise.all(
         // create 'clientCount' pairs of server & client socket.io sockets
-        Array(clientCount)
+        Array(normalizedOptions.client.count)
           .fill(null)
           .map(
             () =>
