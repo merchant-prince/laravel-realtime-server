@@ -222,7 +222,7 @@ export default class Realtime {
    * @param data {
    *    channel: The channel to broadcast the payload to.
    *    event: The event to emit.
-   *    payload: the payload to emit with the event.
+   *    payload: The payload to emit with the event.
    * }
    */
   protected broadcastClientEvent(
@@ -238,7 +238,7 @@ export default class Realtime {
 
   /**
    * Listen for 'pmessage' events from the Laravel application's redis broadcasting server, and emit or broadcast
-   * the data (depending on whether the 'socket' property is null).
+   * the data (depending on whether the 'socket' property is null) to socket.io clients.
    */
   protected listenForRedisPublishedEvents(): void {
     try {
