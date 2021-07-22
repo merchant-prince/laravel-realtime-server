@@ -161,7 +161,8 @@ export default class Realtime {
 
   /**
    * If a socket disconnects from the server, we find all the presence channels it was subscribed to, and unsubscribe
-   * from them.
+   * from them. We don't need to unsubscribe to public or private channels, as they automatically leave the channel
+   * when the client socket disconnects.
    *
    * @param socket The user's socket.
    */
