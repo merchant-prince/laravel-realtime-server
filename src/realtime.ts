@@ -116,7 +116,9 @@ export default class Realtime {
           channelName
         );
 
-        this.ioNsp.to(channelName).emit('presence:subscribed', channelMembersData);
+        this.ioNsp
+          .to(channelName)
+          .emit('presence:subscribed', channelMembersData);
       }
     }
   }
@@ -254,7 +256,10 @@ export default class Realtime {
           };
 
           if (typeof socketId === 'string') {
-            this.ioNsp.sockets.get(socketId)?.to(channelName).emit(event, payload);
+            this.ioNsp.sockets
+              .get(socketId)
+              ?.to(channelName)
+              .emit(event, payload);
           } else {
             this.ioNsp.to(channelName).emit(event, payload);
           }
