@@ -7,10 +7,13 @@ import Redis from './mocks/redis';
 
 /**
  * Set up the Socket.io server and client.
+ *
+ * @param clientCount The number of clients to connect to the websocket server.
  */
-export const setupRealtimeServerAndSocketIoClient = (): Promise<{
-  serverSocket: ServerSocket;
-  clientSocket: ClientSocket;
+export const setupRealtimeServerAndSocketIoClients = (
+  clientCount: number
+): Promise<{
+  socketPairs: { server: ServerSocket; client: ClientSocket }[];
   socketIoServer: SocketIoServer;
   realtime: Realtime;
 }> => {
@@ -31,7 +34,7 @@ export const setupRealtimeServerAndSocketIoClient = (): Promise<{
   });
 
   return new Promise((resolve) => {
-    httpServer.listen(() => {
+    httpServer.listen(async () => {
       const address = httpServer.address();
 
       if (address == null || typeof address === 'string') {
@@ -40,21 +43,40 @@ export const setupRealtimeServerAndSocketIoClient = (): Promise<{
         );
       }
 
-      let serverSocket: ServerSocket;
+      const socketPairs: { server: ServerSocket; client: ClientSocket }[] =
+        await Promise.all(
+          // create 'clientCount' pairs of server & client socket.io sockets
+          Array(clientCount)
+            .fill(null)
+            .map(
+              () =>
+                new Promise<{ server: ServerSocket; client: ClientSocket }>(
+                  (resolve) => {
+                    let serverSocket: ServerSocket;
 
-      socketIoServer.on('connect', (socket) => {
-        serverSocket = socket;
-      });
+                    socketIoServer.on('connect', (socket) => {
+                      serverSocket = socket;
+                    });
 
-      const clientSocket = SocketIoClient(`http://localhost:${address.port}`);
+                    const clientSocket = SocketIoClient(
+                      `http://localhost:${address.port}`
+                    );
 
-      clientSocket.on('connect', () => {
-        resolve({
-          serverSocket,
-          clientSocket,
-          socketIoServer,
-          realtime,
-        });
+                    clientSocket.on('connect', () => {
+                      resolve({
+                        server: serverSocket,
+                        client: clientSocket,
+                      });
+                    });
+                  }
+                )
+            )
+        );
+
+      resolve({
+        socketPairs,
+        socketIoServer,
+        realtime,
       });
     });
   });
