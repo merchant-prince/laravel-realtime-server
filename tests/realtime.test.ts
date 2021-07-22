@@ -17,7 +17,7 @@ describe('testing the Realtime class', () => {
     expect.assertions(2);
 
     const { socketPairs, socketIoServer } =
-      await setupRealtimeServerAndSocketIoClients(1);
+      await setupRealtimeServerAndSocketIoClients();
     const channelName = 'OneTwo';
 
     await new Promise<void>((resolve) => {
@@ -41,7 +41,7 @@ describe('testing the Realtime class', () => {
     expect.assertions(2);
 
     const { socketPairs, socketIoServer } =
-      await setupRealtimeServerAndSocketIoClients(1);
+      await setupRealtimeServerAndSocketIoClients();
     const channelName = 'TwoThree';
 
     await new Promise<void>((resolve) => {
@@ -68,7 +68,7 @@ describe('testing the Realtime class', () => {
 
   test('client events are broadcasted to other listening client sockets', async () => {
     const { socketPairs, socketIoServer } =
-      await setupRealtimeServerAndSocketIoClients(2);
+      await setupRealtimeServerAndSocketIoClients({ client: { count: 2 } });
     const channelName = 'three-four';
     const eventName = 'hello.world';
     const payload = {
@@ -113,7 +113,7 @@ describe('testing the Realtime class', () => {
 
   test("only a client socket subscribed to a channel receives an event published on that channel (by the Laravel application's redis server)", async () => {
     const { socketPairs, socketIoServer, realtime } =
-      await setupRealtimeServerAndSocketIoClients(2);
+      await setupRealtimeServerAndSocketIoClients({ client: { count: 2 } });
     const channelName = 'Four.Five';
     const eventData = {
       event: 'App\\Events\\HelloWorld',
@@ -165,7 +165,7 @@ describe('testing the Realtime class', () => {
 
   test("a client socket whose id is in an event - published on the Laravel application's redis server - does not receive said event", async () => {
     const { socketPairs, socketIoServer, realtime } =
-      await setupRealtimeServerAndSocketIoClients(2);
+      await setupRealtimeServerAndSocketIoClients({ client: { count: 2 } });
     const channelName = 'Vash-The-Stampede';
 
     await Promise.all(
@@ -217,10 +217,62 @@ describe('testing the Realtime class', () => {
 
   // presence;joining + presence:subscribed
   // --> db data
+  // test('presence channel subscription (~e2e)', async () => {
+  //   const { socketPairs, socketIoServer, realtime } =
+  //     await setupRealtimeServerAndSocketIoClients({client: {count: 2}});
+  //   const channelName = 'presence-general-chat';
 
-  // presence;leaving + presence:subscribed
-  // --> db data
+  //   await Promise.all(
+  //     socketPairs.map(
+  //       ({ server, client }) =>
+  //         new Promise<void>((resolve) => {
+  //           server.on('subscribe', resolve);
+  //           client.emit('subscribe', channelName);
+  //         })
+  //     )
+  //   );
 
-  // disconnecting
-  // --> db data
+  //   const eventData = {
+  //     event: 'App\\Events\\WhoAmI',
+  //     socket: socketPairs[0]?.client.id,
+  //     data: {
+  //       socket: socketPairs[0]?.client.id,
+  //       id: 666,
+  //       message: 'All hail Stan!',
+  //     },
+  //   };
+
+  //   await new Promise<void>((resolve, reject) => {
+  //     socketPairs[0]?.client.on(eventData.event, () => {
+  //       reject(
+  //         'This socket.io client is not supposed to receive the event because the event data contains its socket id (it was broadcasted from the Laravel application).'
+  //       );
+  //     });
+
+  //     socketPairs[1]?.client.on(eventData.event, (payload) => {
+  //       expect(payload).toEqual({
+  //         id: eventData.data.id,
+  //         message: eventData.data.message,
+  //       });
+
+  //       resolve();
+  //     });
+
+  //     (realtime.subscriber.connection as unknown as RedisMock).pmessage(
+  //       '',
+  //       channelName,
+  //       JSON.stringify(eventData)
+  //     );
+  //   });
+
+  //   socketPairs.forEach(({ client }) => client.close());
+  //   socketIoServer.close();
+
+  // });
+
+  // // presence;leaving + presence:subscribed
+  // // --> db data
+
+  // // disconnecting
+  // // --> db data
 });
