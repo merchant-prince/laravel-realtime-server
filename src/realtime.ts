@@ -272,7 +272,9 @@ export default class Realtime {
         }
       );
     } catch (error) {
-      console.error(`Error: ${error.message}.`);
+      console.error(
+        `Error while subscribing to the redis server: ${error.message}.`
+      );
     }
   }
 
