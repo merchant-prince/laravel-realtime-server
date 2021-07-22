@@ -299,6 +299,38 @@ describe('testing the Realtime class', () => {
     socketIoServer.close();
   });
 
+  test('data is only stored once, even if the user joins the channel multiple times - (ditto for events)', async () => {
+    // since data is only stored once, the events are also sent only once when a user joins a channel multiple times
+    expect.assertions(2);
+
+    const channelName = 'presence-general-chat';
+    const { socketPairs, socketIoServer, realtime } =
+      await setupRealtimeServerAndSocketIoClients({ client: { count: 2 } });
+    const userData = { id: 1, name: 'One', email: 'one@one.one' };
+
+    await Promise.all(
+      socketPairs.map(
+        ({ server, client }) =>
+          new Promise<void>((resolve) => {
+            server.on('subscribe', () => resolve());
+            client.emit('subscribe', channelName, userData);
+          })
+      )
+    );
+
+    const channelSet = await realtime.database.getChannelMembers(channelName);
+    expect(channelSet.length).toBe(1);
+
+    const socketCount = await realtime.database.createOrIncreaseUserSocketCount(
+      userData,
+      channelName
+    );
+    expect(socketCount).toBe(3);
+
+    socketPairs.forEach(({ client }) => client.close());
+    socketIoServer.close();
+  });
+
   // // presence;leaving + presence:subscribed
   // // --> db data
 
