@@ -1,5 +1,6 @@
 import Realtime from '../src/realtime';
 import { setupRealtimeServerAndSocketIoClients } from './utilities/setup';
+import RedisMock from '../tests/utilities/mocks/redis';
 
 describe('testing the Realtime class', () => {
   // Realtime.isPresenceChannel
@@ -109,4 +110,67 @@ describe('testing the Realtime class', () => {
     socketPairs.forEach(({ client }) => client.close());
     socketIoServer.close();
   });
+
+  test("only a client socket subscribed to a channel receives an event published on that channel (by the Laravel application's redis server)", async () => {
+    const { socketPairs, socketIoServer, realtime } =
+      await setupRealtimeServerAndSocketIoClients(2);
+    const channelName = 'Four.Five';
+    const eventData = {
+      event: 'App\\Events\\HelloWorld',
+      socket: null,
+      data: {
+        socket: null,
+        id: 554,
+        message: 'One is One',
+      },
+    };
+
+    await Promise.all([
+      new Promise<void>((resolve) => {
+        socketPairs[0]?.server.on('subscribe', resolve);
+        socketPairs[0]?.client.emit('subscribe', channelName);
+      }),
+      new Promise<void>((resolve) => {
+        socketPairs[1]?.server.on('subscribe', resolve);
+        socketPairs[1]?.client.emit('subscribe', 'no-no-no');
+      }),
+    ]);
+
+    await new Promise<void>((resolve, reject) => {
+      socketPairs[1]?.client.on(eventData.event, () => {
+        reject(
+          'This socket.io client is not supposed to receive the event because it did not subscribe to the channel.'
+        );
+      });
+
+      socketPairs[0]?.client.on(eventData.event, (payload) => {
+        expect(payload).toEqual({
+          id: eventData.data.id,
+          message: eventData.data.message,
+        });
+
+        resolve();
+      });
+
+      (realtime.subscriber.connection as unknown as RedisMock).pmessage(
+        '',
+        channelName,
+        JSON.stringify(eventData)
+      );
+    });
+
+    socketPairs.forEach(({ client }) => client.close());
+    socketIoServer.close();
+  });
+
+  // test("a client socket whose socket id is in an event (published on the Laravel application's redis server) does not receive said event", async () => {});
+
+  // presence;joining + presence:subscribed
+  // --> db data
+
+  // presence;leaving + presence:subscribed
+  // --> db data
+
+  // disconnecting
+  // --> db data
 });
