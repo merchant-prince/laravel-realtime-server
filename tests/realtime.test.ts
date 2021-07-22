@@ -41,7 +41,7 @@ describe('testing the Realtime class', () => {
 
     const { socketPairs, socketIoServer } =
       await setupRealtimeServerAndSocketIoClients(1);
-    const channelName = 'OneTwo';
+    const channelName = 'TwoThree';
 
     await new Promise<void>((resolve) => {
       socketPairs[0]?.server.on('subscribe', resolve);
@@ -59,6 +59,51 @@ describe('testing the Realtime class', () => {
       });
 
       socketPairs[0]?.client.emit('unsubscribe', channelName);
+    });
+
+    socketPairs.forEach(({ client }) => client.close());
+    socketIoServer.close();
+  });
+
+  test('client events are broadcasted to other listening client sockets', async () => {
+    const { socketPairs, socketIoServer } =
+      await setupRealtimeServerAndSocketIoClients(2);
+    const channelName = 'three-four';
+    const eventName = 'hello.world';
+    const payload = {
+      message: 'hello, world',
+    };
+
+    await Promise.all(
+      socketPairs.map(
+        ({ server, client }) =>
+          new Promise<void>((resolve) => {
+            server.on('subscribe', resolve);
+            client.emit('subscribe', channelName);
+          })
+      )
+    );
+
+    await new Promise<void>((resolve, reject) => {
+      const broadcastingClient = socketPairs[0]?.client;
+      const receivingClient = socketPairs[1]?.client;
+
+      broadcastingClient?.on(`client-${eventName}`, () => {
+        reject(
+          'This socket.io client is not supposed to receive a client-event it broadcasted.'
+        );
+      });
+
+      receivingClient?.on(`client-${eventName}`, (receivedPayload) => {
+        expect(receivedPayload.message).toBe(payload.message);
+        resolve();
+      });
+
+      broadcastingClient?.emit('client-event', {
+        channel: channelName,
+        event: `client-${eventName}`,
+        payload: payload,
+      });
     });
 
     socketPairs.forEach(({ client }) => client.close());
