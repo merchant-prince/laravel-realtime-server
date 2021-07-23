@@ -1,5 +1,9 @@
 import EventEmitter from 'events';
 
+/**
+ * This is a mock of ioredis' redis connection. It is not feature-complete, and is meant to be used for this project
+ * only.
+ */
 export default class Redis extends EventEmitter {
   public constructor(
     private readonly database: Record<string, unknown> = {},

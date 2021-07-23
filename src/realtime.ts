@@ -29,19 +29,19 @@ export default class Realtime {
   /**
    * Initialize socket.io, redis subscriptions, and the database.
    *
-   * @param options The options needed to construct the object. They are self-explanatory.
+   * @param options The options needed to construct the object.
    */
   constructor(options: {
     database: {
-      connection: IORedis.Redis;
+      connection: IORedis.Redis; // the ioredis database connection
     };
     subscriber: {
-      connection: IORedis.Redis;
-      prefix: string;
+      connection: IORedis.Redis; // the ioredis 'pmessage' subscriber connection
+      prefix: string; // the database prefix of the Laravel application's redis server (@see its usage)
     };
     websocket: {
-      connection: SocketIoServer;
-      namespace: string;
+      connection: SocketIoServer; // the socket.io server
+      namespace: string; // the socket.io namespace to use
     };
   }) {
     this.ioNsp = options.websocket.connection.of(options.websocket.namespace);
