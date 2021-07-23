@@ -1,5 +1,5 @@
 {
-  "name": "@merchant-prince/laravel-realtime-client",
+  "name": "@merchant-prince/laravel-realtime-server",
   "version": "0.9.1",
   "description": "Server library to facilitate Socket.io integration with the Laravel framework.",
   "keywords": [
