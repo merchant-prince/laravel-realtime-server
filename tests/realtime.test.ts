@@ -333,6 +333,62 @@ describe('testing the Realtime class', () => {
 
   // // presence;leaving + presence:subscribed
   // // --> db data
+  // HERE
+  test.only('the correct events are sent when a user leaves a presence channel', async () => {
+    expect.assertions(2);
+
+    const channelName = 'presence-general-chat';
+    const { socketPairs, socketIoServer } =
+      await setupRealtimeServerAndSocketIoClients({ client: { count: 2 } });
+    const userData = { id: 1, name: 'One', email: 'one@one.one' };
+    const counter = {
+      'presence:subscribed': 0,
+    };
+
+    await Promise.all([
+      new Promise((resolve) => {
+        socketPairs[0]?.server.on('subscribe', resolve);
+        socketPairs[0]?.client.emit('subscribe', channelName);
+      }),
+      new Promise<void>((resolve) => {
+        socketPairs[1]?.server.on('subscribe', () => resolve());
+        socketPairs[1]?.client.emit('subscribe', channelName, userData);
+      }),
+    ]);
+
+    await Promise.all([
+      new Promise<void>((resolve) => {
+        socketPairs[1]?.server.prependListener('unsubscribe', () => resolve());
+        socketPairs[1]?.client.emit('unsubscribe', channelName, userData);
+      }),
+
+      Promise.all([
+        new Promise<void>((resolve) => {
+          socketPairs[0]?.client.on('presence:leaving', (receivedUserData) => {
+            expect(receivedUserData).toEqual(userData);
+            resolve();
+          });
+        }),
+
+        new Promise<void>((resolve) => {
+          socketPairs[0]?.client.on(
+            'presence:subscribed',
+            (channelMembersData) => {
+              // we only resolve this promise when the 'presence:subscribed has been called the 2nd time.
+              // this is because it is first called when the client send the 'subscribe' event to the server.
+              if (++counter['presence:subscribed'] === 2) {
+                expect(channelMembersData).toEqual([]);
+                resolve();
+              }
+            }
+          );
+        }),
+      ]),
+    ]);
+
+    socketPairs.forEach(({ client }) => client.close());
+    socketIoServer.close();
+  });
 
   // // disconnecting
   // // --> db data
