@@ -319,6 +319,13 @@ describe('testing the Realtime class', () => {
       )
     );
 
+    await new Promise<void>((resolve) => {
+      // this settimeout is needed so that the data has time to be mutated in the db.
+      // otherwise, the database checks (below) can fail since it can be queried before the mutation occurs.
+      // (welcome to async / await; please enjoy your promised stay...)
+      setTimeout(resolve, 250);
+    });
+
     const channelSet = await realtime.database.getChannelMembers(channelName);
     expect(channelSet.length).toBe(1);
 
@@ -388,8 +395,8 @@ describe('testing the Realtime class', () => {
     socketIoServer.close();
   });
 
-  test('the correct data is removed from the database when a user leaves a presence channel', async () => {
-    expect.assertions(2);
+  test('the correct data is removed from the database when the last socket of a user leaves a presence channel', async () => {
+    expect.assertions(3);
 
     const channelName = 'presence-OneTwo';
     const { socketPairs, socketIoServer, realtime } =
@@ -410,7 +417,12 @@ describe('testing the Realtime class', () => {
         socketPairs[0]?.client.emit('subscribe', channelName, userData);
       }),
       new Promise<void>((resolve) => {
-        socketPairs[0]?.server.on('unsubscribe', () => resolve());
+        socketPairs[0]?.server.on('unsubscribe', () => {
+          // this settimeout is needed so that the data has time to be mutated in the db.
+          // otherwise, the database checks (below) can fail since it can be queried before the mutation occurs.
+          // (welcome to async / await; please enjoy your promised stay...)
+          setTimeout(resolve, 250);
+        });
       }),
     ]);
 
@@ -419,8 +431,8 @@ describe('testing the Realtime class', () => {
     );
     expect(socketIdUserData).toBeNull();
 
-    // we don't need to check for the existence of the user's data in the channel set since this is done in the
-    // previous test.
+    const channelSet = await realtime.database.getChannelMembers(channelName);
+    expect(channelSet.length).toBe(0);
 
     const socketCount = await realtime.database.createOrIncreaseUserSocketCount(
       userData,
@@ -431,4 +443,6 @@ describe('testing the Realtime class', () => {
     socketPairs.forEach(({ client }) => client.close());
     socketIoServer.close();
   });
+
+  // disconnecting
 });
