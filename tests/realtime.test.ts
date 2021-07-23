@@ -119,6 +119,7 @@ describe('testing the Realtime class', () => {
     const { socketPairs, socketIoServer, realtime } =
       await setupRealtimeServerAndSocketIoClients({ client: { count: 2 } });
     const channelName = 'Four.Five';
+    const nonReceivingChannelName = 'Nope.Jpeg';
     const eventData = {
       event: 'App\\Events\\HelloWorld',
       socket: null,
@@ -136,7 +137,7 @@ describe('testing the Realtime class', () => {
       }),
       new Promise((resolve) => {
         socketPairs[1]?.server.on('subscribe', resolve);
-        socketPairs[1]?.client.emit('subscribe', 'no-no-no');
+        socketPairs[1]?.client.emit('subscribe', nonReceivingChannelName);
       }),
     ]);
 
@@ -331,10 +332,7 @@ describe('testing the Realtime class', () => {
     socketIoServer.close();
   });
 
-  // // presence;leaving + presence:subscribed
-  // // --> db data
-  // HERE
-  test.only('the correct events are sent when a user leaves a presence channel', async () => {
+  test('the correct events are sent when a user leaves a presence channel', async () => {
     expect.assertions(2);
 
     const channelName = 'presence-general-chat';
@@ -358,7 +356,7 @@ describe('testing the Realtime class', () => {
 
     await Promise.all([
       new Promise<void>((resolve) => {
-        socketPairs[1]?.server.prependListener('unsubscribe', () => resolve());
+        socketPairs[1]?.server.on('unsubscribe', () => resolve());
         socketPairs[1]?.client.emit('unsubscribe', channelName, userData);
       }),
 
@@ -375,7 +373,7 @@ describe('testing the Realtime class', () => {
             'presence:subscribed',
             (channelMembersData) => {
               // we only resolve this promise when the 'presence:subscribed has been called the 2nd time.
-              // this is because it is first called when the client send the 'subscribe' event to the server.
+              // this is because it is first called when the client sends the 'subscribe' event to the server.
               if (++counter['presence:subscribed'] === 2) {
                 expect(channelMembersData).toEqual([]);
                 resolve();
@@ -390,6 +388,47 @@ describe('testing the Realtime class', () => {
     socketIoServer.close();
   });
 
-  // // disconnecting
-  // // --> db data
+  test('the correct data is removed from the database when a user leaves a presence channel', async () => {
+    expect.assertions(2);
+
+    const channelName = 'presence-OneTwo';
+    const { socketPairs, socketIoServer, realtime } =
+      await setupRealtimeServerAndSocketIoClients();
+    const userData = {
+      id: 10,
+      name: 'ElevenTwelve',
+      email: 'elevel@twelve.thirteen',
+    };
+
+    await Promise.all([
+      new Promise<void>((resolve) => {
+        socketPairs[0]?.server.on('subscribe', () => {
+          socketPairs[0]?.client.emit('unsubscribe', channelName);
+          resolve();
+        });
+
+        socketPairs[0]?.client.emit('subscribe', channelName, userData);
+      }),
+      new Promise<void>((resolve) => {
+        socketPairs[0]?.server.on('unsubscribe', () => resolve());
+      }),
+    ]);
+
+    const socketIdUserData = await realtime.database.getUserDataFromSocketId(
+      socketPairs[0]?.client.id as string
+    );
+    expect(socketIdUserData).toBeNull();
+
+    // we don't need to check for the existence of the user's data in the channel set since this is done in the
+    // previous test.
+
+    const socketCount = await realtime.database.createOrIncreaseUserSocketCount(
+      userData,
+      channelName
+    );
+    expect(socketCount).toBe(1);
+
+    socketPairs.forEach(({ client }) => client.close());
+    socketIoServer.close();
+  });
 });
