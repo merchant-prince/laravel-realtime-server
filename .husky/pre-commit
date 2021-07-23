@@ -1,7 +1,0 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-# since yarn will be run from docker, alias the docker command.
-alias yarn="docker run --rm --user '$(id -u):$(id -g)' --mount 'type=bind,source=$(pwd),target=/application' --workdir '/application' node yarn"
-
-yarn lint && yarn test

@@ -1,14 +1,16 @@
 {
-  "name": "laravel-realtime-client",
-  "version": "0.0.1",
+  "name": "@merchant-prince/laravel-realtime-client",
+  "version": "0.9.1",
   "description": "Server library to facilitate Socket.io integration with the Laravel framework.",
   "keywords": [
     "laravel",
+    "laravel-echo",
     "realtime",
     "socket.io"
   ],
   "author": {
-    "name": "Harivansh"
+    "name": "Harivansh",
+    "email": "hello@harivan.sh"
   },
   "repository": {
     "type": "git",
@@ -17,13 +19,15 @@
   "license": "MIT",
   "main": "dist/realtime.js",
   "types": "dist/realtime.d.ts",
+  "files": [
+    "dist/realtime.d.ts",
+    "dist/realtime.js"
+  ],
   "scripts": {
     "compile": "rollup --config && rm -rf ./dist/types",
     "lint": "eslint --config .eslint.config.js --ext .ts ./src ./tests",
     "test": "jest",
-    "postinstall": "husky install",
-    "prepublishOnly": "pinst --disable",
-    "postpublish": "pinst --enable"
+    "publish": "yarn run compile && yarn npm publish --access public"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.2.3",
@@ -36,10 +40,8 @@
     "eslint-plugin-prettier": "^3.4.0",
     "events": "^3.3.0",
     "http": "^0.0.1-security",
-    "husky": "^7.0.0",
     "ioredis": "^4.27.6",
     "jest": "^27.0.6",
-    "pinst": "^2.0.0",
     "prettier": "^2.3.2",
     "rollup": "^2.53.2",
     "rollup-plugin-dts": "^3.0.2",
