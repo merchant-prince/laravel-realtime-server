@@ -1,7 +1,7 @@
 import IORedis from 'ioredis';
 
 /**
- * This class subscribes to events on Laravel application's redis server.
+ * This class subscribes to events on the Laravel application's redis server.
  */
 export default class RedisSubscriber {
   /**
@@ -19,8 +19,8 @@ export default class RedisSubscriber {
   /**
    * Subscribe for messages on the Laravel application's redis server.
    *
-   * @param callback The function to call when a message is published via redis PUB/SUB.
-   * @param errorCallback The function to call if an error is thrown when calling 'callback'.
+   * @param callback The function to call when a message is published via redis' PUB/SUB.
+   * @param errorCallback The function to call if an error is thrown when calling the aforementioned callback.
    * @throws Error if 'psubscribe' fails.
    */
   public subscribe(

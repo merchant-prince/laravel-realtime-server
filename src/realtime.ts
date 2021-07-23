@@ -12,7 +12,7 @@ import RedisSubscriber from './subscriber/redis-subscriber';
  */
 export default class Realtime {
   /**
-   * The socket.io namespace which will be used for all socket.io operations.
+   * The socket.io namespace which will be used for socket.io operations.
    */
   public readonly ioNsp: SocketIoNamespace;
 
@@ -22,14 +22,14 @@ export default class Realtime {
   public readonly subscriber: RedisSubscriber;
 
   /**
-   * The database used for storing presence-channels related data.
+   * The object responsible for database manipulation.
    */
   public readonly database: RedisDatabase;
 
   /**
-   * Initialize socket.io, redis subscriptions, and database.
+   * Initialize socket.io, redis subscriptions, and the database.
    *
-   * @param options
+   * @param options The options needed to construct the object. They are self-explanatory.
    */
   constructor(options: {
     database: {
@@ -55,8 +55,8 @@ export default class Realtime {
   }
 
   /**
-   * Initialize the socket.io server, and start listening for socket.io events. Then psubscribe to the configured redis
-   * channels, and start listening for 'pmessage's.
+   * Initialize the socket.io server, start listening for socket.io events, 'psubscribe' to the configured redis
+   * channels, and start listening for 'pmessage's (events & notifications from the Laravel application).
    */
   protected initializeWebsocketsAndStartListeningForRedisEvents(): void {
     this.ioNsp.on('connection', (socket) => {
@@ -82,7 +82,7 @@ export default class Realtime {
 
   /**
    * Subscribe a socket to a channel. The socket joins a room identified by the channel name. For presence channels,
-   * the socket additionally adds and/or mutates some data in the database.
+   * the socket additionally adds and/or mutates user-related data in the database.
    *
    * @param socket The user's socket.
    * @param channelName The name of the channel to subscribe to.
@@ -125,7 +125,7 @@ export default class Realtime {
 
   /**
    * Unsubscribe a socket from a channel. The socket leaves a room identified by the channel name. For presence
-   * channels, the socket additionally adds and/or mutates some data in the database.
+   * channels, the socket additionally adds and/or mutates user-related data in the database.
    *
    * @param socket The user's socket.
    * @param channelName The name of the channel to unsubscribe from.
@@ -161,8 +161,8 @@ export default class Realtime {
 
   /**
    * If a socket disconnects from the server, we find all the presence channels it was subscribed to, and unsubscribe
-   * from them. We don't need to unsubscribe to public or private channels, as they automatically leave the channel
-   * when the client socket disconnects.
+   * from them. We don't need to unsubscribe from public or private channels, since they automatically leave the
+   * channel when the client socket disconnects.
    *
    * @param socket The user's socket.
    */
