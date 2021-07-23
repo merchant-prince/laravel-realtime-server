@@ -12,7 +12,7 @@ describe('testing the Realtime class', () => {
     expect(Realtime['isPresenceChannel'](nonPresenceChannel)).toBeFalsy();
   });
 
-  // constructor
+  // basic
   test("the client's 'server socket' joins a room identified by the 'channelName' when a 'subscribe' event is sent to the server from the 'client socket'", async () => {
     expect.assertions(2);
 
@@ -222,6 +222,7 @@ describe('testing the Realtime class', () => {
     socketIoServer.close();
   });
 
+  // joining presence channels
   test('the correct events are sent when a user joins a presence channel', async () => {
     expect.assertions(3);
 
@@ -339,6 +340,7 @@ describe('testing the Realtime class', () => {
     socketIoServer.close();
   });
 
+  // leaving presence channels
   test('the correct events are sent when a user leaves a presence channel', async () => {
     expect.assertions(2);
 
@@ -444,6 +446,7 @@ describe('testing the Realtime class', () => {
     socketIoServer.close();
   });
 
+  // disconnecting from presence channels
   test("a socket's presence channels' data is removed from the database when it disconnects", async () => {
     expect.assertions(3);
 
