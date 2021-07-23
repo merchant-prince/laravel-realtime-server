@@ -1,5 +1,5 @@
 ### Project ###
-yarn
+node
 dist/
 
 ### Yarn 2 ###
