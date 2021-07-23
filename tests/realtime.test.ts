@@ -395,7 +395,7 @@ describe('testing the Realtime class', () => {
     socketIoServer.close();
   });
 
-  test('the correct data is removed from the database when the last socket of a user leaves a presence channel', async () => {
+  test('the correct data is removed from the database when a user leaves a presence channel', async () => {
     expect.assertions(3);
 
     const channelName = 'presence-OneTwo';
@@ -444,5 +444,45 @@ describe('testing the Realtime class', () => {
     socketIoServer.close();
   });
 
-  // disconnecting
+  test("a socket's presence channels' data is removed from the database when it disconnects", async () => {
+    expect.assertions(3);
+
+    const channelName = 'presence-OneTwoThree';
+    const { socketPairs, socketIoServer, realtime } =
+      await setupRealtimeServerAndSocketIoClients();
+    const userData = {
+      id: 101112,
+      name: 'ElevenTwelveThirteen',
+      email: 'elevel@twelve.thirteenfourten',
+    };
+
+    await new Promise<void>((resolve) => {
+      socketPairs[0]?.server.on('subscribe', () => {
+        socketPairs[0]?.client.close();
+
+        // this settimeout is needed so that the data has time to be mutated in the db.
+        // otherwise, the database checks (below) can fail since it can be queried before the mutation occurs.
+        // (welcome to async / await; please enjoy your promised stay...)
+        setTimeout(resolve, 250);
+      });
+
+      socketPairs[0]?.client.emit('subscribe', channelName, userData);
+    });
+
+    const socketIdUserData = await realtime.database.getUserDataFromSocketId(
+      socketPairs[0]?.client.id as string
+    );
+    expect(socketIdUserData).toBeNull();
+
+    const channelSet = await realtime.database.getChannelMembers(channelName);
+    expect(channelSet.length).toBe(0);
+
+    const socketCount = await realtime.database.createOrIncreaseUserSocketCount(
+      userData,
+      channelName
+    );
+    expect(socketCount).toBe(1);
+
+    socketIoServer.close();
+  });
 });
