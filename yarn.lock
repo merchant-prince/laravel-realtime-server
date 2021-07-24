@@ -689,9 +689,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@merchant-prince/laravel-realtime-client@workspace:.":
+"@merchant-prince/laravel-realtime-server@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@merchant-prince/laravel-realtime-client@workspace:."
+  resolution: "@merchant-prince/laravel-realtime-server@workspace:."
   dependencies:
     "@rollup/plugin-typescript": ^8.2.3
     "@types/ioredis": ^4.26.6
