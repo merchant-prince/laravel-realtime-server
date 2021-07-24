@@ -56,50 +56,50 @@ export const setupRealtimeServerAndSocketIoClients = (options?: {
     },
   });
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     httpServer.listen(async () => {
       const address = httpServer.address();
 
       if (address == null || typeof address === 'string') {
-        throw new Error(
+        reject(
           `Could not get an address for the http server (address: ${address}, type: ${typeof address}).`
         );
-      }
+      } else {
+        const socketPairs = await Promise.all(
+          // create 'clientCount' pairs of server & client socket.io sockets
+          Array(normalizedOptions.client.count)
+            .fill(null)
+            .map(
+              () =>
+                new Promise<{ server: ServerSocket; client: ClientSocket }>(
+                  (resolve) => {
+                    let serverSocket: ServerSocket;
 
-      const socketPairs = await Promise.all(
-        // create 'clientCount' pairs of server & client socket.io sockets
-        Array(normalizedOptions.client.count)
-          .fill(null)
-          .map(
-            () =>
-              new Promise<{ server: ServerSocket; client: ClientSocket }>(
-                (resolve) => {
-                  let serverSocket: ServerSocket;
-
-                  socketIoServer.on('connect', (socket) => {
-                    serverSocket = socket;
-                  });
-
-                  const clientSocket = SocketIoClient(
-                    `http://localhost:${address.port}`
-                  );
-
-                  clientSocket.on('connect', () => {
-                    resolve({
-                      server: serverSocket,
-                      client: clientSocket,
+                    socketIoServer.on('connect', (socket) => {
+                      serverSocket = socket;
                     });
-                  });
-                }
-              )
-          )
-      );
 
-      resolve({
-        socketPairs,
-        socketIoServer,
-        realtime,
-      });
+                    const clientSocket = SocketIoClient(
+                      `http://localhost:${address.port}`
+                    );
+
+                    clientSocket.on('connect', () => {
+                      resolve({
+                        server: serverSocket,
+                        client: clientSocket,
+                      });
+                    });
+                  }
+                )
+            )
+        );
+
+        resolve({
+          socketPairs,
+          socketIoServer,
+          realtime,
+        });
+      }
     });
   });
 };
