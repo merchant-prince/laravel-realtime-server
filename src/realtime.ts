@@ -37,7 +37,7 @@ export default class Realtime {
     };
     subscriber: {
       connection: IORedis.Redis; // the ioredis 'pmessage' subscriber connection
-      prefix: string; // the database prefix of the Laravel application's redis server (@see its usage)
+      prefix: string; // the database prefix of the Laravel application's redis server (see REDIS_PREFIX in laravel)
     };
     websocket: {
       connection: SocketIoServer; // the socket.io server
@@ -56,7 +56,7 @@ export default class Realtime {
 
   /**
    * Initialize the socket.io server, start listening for socket.io events, 'psubscribe' to the configured redis
-   * channels, and start listening for 'pmessage's (events & notifications from the Laravel application).
+   * channels, and start listening for 'pmessage's (i.e.: events & notifications from the Laravel application).
    */
   protected initializeWebsocketsAndStartListeningForRedisEvents(): void {
     this.ioNsp.on('connection', (socket) => {
@@ -82,7 +82,7 @@ export default class Realtime {
 
   /**
    * Subscribe a socket to a channel. The socket joins a room identified by the channel name. For presence channels,
-   * the socket additionally adds and/or mutates user-related data in the database.
+   * the socket additionally adds/mutates user-related data in the database.
    *
    * @param socket The user's socket.
    * @param channelName The name of the channel to subscribe to.
@@ -109,7 +109,7 @@ export default class Realtime {
         )) === 1;
 
       if (userJustJoinedTheChannel) {
-        // emit to every socket on the channel EXCEPT the one that just joined the channel.
+        // emit to every socket on the channel EXCEPT the one joining the channel
         socket.to(channelName).emit('presence:joining', userData);
 
         const channelMembersData = await this.database.getChannelMembers(
@@ -125,7 +125,7 @@ export default class Realtime {
 
   /**
    * Unsubscribe a socket from a channel. The socket leaves a room identified by the channel name. For presence
-   * channels, the socket additionally adds and/or mutates user-related data in the database.
+   * channels, the socket additionally removes/mutates user-related data in the database.
    *
    * @param socket The user's socket.
    * @param channelName The name of the channel to unsubscribe from.
@@ -161,8 +161,8 @@ export default class Realtime {
 
   /**
    * If a socket disconnects from the server, we find all the presence channels it was subscribed to, and unsubscribe
-   * from them. We don't need to unsubscribe from public or private channels, since they automatically leave the
-   * channel when the client socket disconnects.
+   * from them. We don't need to unsubscribe from public or private channels, since they are automatically removed from
+   * channels (socket.io rooms) when the client socket disconnects.
    *
    * @param socket The user's socket.
    */
@@ -209,12 +209,14 @@ export default class Realtime {
   ): Promise<void> {
     await this.database.removeUserDataFromChannel(userData, channelName);
 
+    // emit to every socket on the channel EXCEPT the one leaving the channel
     socket.to(channelName).emit('presence:leaving', userData);
 
     const channelMembersData = await this.database.getChannelMembers(
       channelName
     );
 
+    // emit to every socket on the channel EXCEPT the one leaving the channel
     socket.to(channelName).emit('presence:subscribed', channelMembersData);
   }
 
@@ -241,7 +243,7 @@ export default class Realtime {
 
   /**
    * Listen for 'pmessage' events from the Laravel application's redis broadcasting server, and emit or broadcast
-   * the data (depending on whether the 'socket' property is null) to socket.io clients.
+   * the data - depending on whether the 'socket' property is null - to socket.io clients.
    */
   protected listenForRedisPublishedEvents(): void {
     try {
