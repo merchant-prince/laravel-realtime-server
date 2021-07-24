@@ -1,6 +1,6 @@
 {
   "name": "@merchant-prince/laravel-realtime-server",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Server library to facilitate Socket.io integration with the Laravel framework.",
   "keywords": [
     "laravel",
@@ -17,11 +17,11 @@
     "url": "https://github.com/merchant-prince/laravel-realtime-server"
   },
   "license": "MIT",
-  "main": "dist/realtime.js",
   "types": "dist/realtime.d.ts",
+  "main": "dist/realtime.mjs",
   "files": [
     "dist/realtime.d.ts",
-    "dist/realtime.js"
+    "dist/realtime.mjs"
   ],
   "scripts": {
     "compile": "rollup --config && rm -rf ./dist/types",
