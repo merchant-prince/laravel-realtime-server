@@ -5,8 +5,7 @@ const config = [
   {
     input: './src/index.ts',
     output: {
-      file: './dist/realtime.js',
-      format: 'esm',
+      file: './dist/realtime.mjs',
     },
     plugins: [
       typescript({ tsconfig: './tsconfig.json' }),
@@ -16,7 +15,6 @@ const config = [
     input: './dist/types/src/index.d.ts',
     output: {
       file: './dist/realtime.d.ts',
-      format: 'esm',
     },
     plugins: [
       dts(),
