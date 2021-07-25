@@ -320,13 +320,6 @@ describe('testing the Realtime class', () => {
       )
     );
 
-    await new Promise<void>((resolve) => {
-      // this settimeout is needed so that the data has time to be mutated in the db.
-      // otherwise, the database checks (below) can fail since it can be queried before the mutation occurs.
-      // (welcome to async / await; please enjoy your promised stay...)
-      setTimeout(resolve, 250);
-    });
-
     const channelSet = await realtime.database.getChannelMembers(channelName);
     expect(channelSet.length).toBe(1);
 
@@ -409,24 +402,22 @@ describe('testing the Realtime class', () => {
       email: 'elevel@twelve.thirteen',
     };
 
-    await Promise.all([
-      new Promise<void>((resolve) => {
-        socketPairs[0]?.server.on('subscribe', () => {
-          socketPairs[0]?.client.emit('unsubscribe', channelName);
-          resolve();
+    await new Promise((resolve) => {
+      socketPairs[0]?.server.on('subscribe', () => {
+        socketPairs[0]?.server.on('unsubscribe', () => {
+          /**
+           * Resolve after the current 'poll' phase, so that the data is mutated in the database before the following
+           * assertions.
+           * @see https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/#setimmediate-vs-settimeout
+           */
+          setImmediate(resolve);
         });
 
-        socketPairs[0]?.client.emit('subscribe', channelName, userData);
-      }),
-      new Promise<void>((resolve) => {
-        socketPairs[0]?.server.on('unsubscribe', () => {
-          // this settimeout is needed so that the data has time to be mutated in the db.
-          // otherwise, the database checks (below) can fail since it can be queried before the mutation occurs.
-          // (welcome to async / await; please enjoy your promised stay...)
-          setTimeout(resolve, 250);
-        });
-      }),
-    ]);
+        socketPairs[0]?.client.emit('unsubscribe', channelName);
+      });
+
+      socketPairs[0]?.client.emit('subscribe', channelName, userData);
+    });
 
     const socketIdUserData = await realtime.database.getUserDataFromSocketId(
       socketPairs[0]?.client.id as string
@@ -459,14 +450,18 @@ describe('testing the Realtime class', () => {
       email: 'elevel@twelve.thirteenfourten',
     };
 
-    await new Promise<void>((resolve) => {
+    await new Promise((resolve) => {
       socketPairs[0]?.server.on('subscribe', () => {
         socketPairs[0]?.client.close();
 
-        // this settimeout is needed so that the data has time to be mutated in the db.
-        // otherwise, the database checks (below) can fail since it can be queried before the mutation occurs.
-        // (welcome to async / await; please enjoy your promised stay...)
-        setTimeout(resolve, 250);
+        socketPairs[0]?.server.on('disconnect', () => {
+          /**
+           * Resolve after the current 'poll' phase, so that the data is mutated in the database before the following
+           * assertions.
+           * @see https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/#setimmediate-vs-settimeout
+           */
+          setImmediate(resolve);
+        });
       });
 
       socketPairs[0]?.client.emit('subscribe', channelName, userData);
