@@ -1,5 +1,9 @@
 # Laravel Realtime (server library)
 
+[![npm (scoped)](https://img.shields.io/npm/v/@merchant-prince/laravel-realtime-server?style=flat-square)](https://www.npmjs.com/package/@merchant-prince/laravel-realtime-server)
+&nbsp;&nbsp;
+![npm](https://img.shields.io/npm/dt/@merchant-prince/laravel-realtime-server?style=flat-square)
+
 ## Preamble
 
 **Laravel Realtime** is a set of libraries that facilitate the integration of **websockets** in [Laravel](https://laravel.com) applications through [Socket.io](https://socket.io). It consists of the following libraries:
