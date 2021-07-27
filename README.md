@@ -25,7 +25,7 @@ yarn add @merchant-prince/laravel-realtime-server socket.io ioredis
 
 ## Usage
 
-The following is the minimum initialization code needed to create a server with this library.
+This library is meant to be used with the [laravel-realtime-client](https://github.com/merchant-prince/laravel-realtime-client) library. The following is the minimum initialization code needed to create a websocket server with this library.
 
 ```js
 import Redis from "ioredis";
@@ -65,17 +65,17 @@ const io = new SocketIoServer(443, {
    * 
    * @see https://socket.io/docs/v4/server-api/#server-serveClient-value
    */
-	serveClient: false,
+  serveClient: false,
 
   /**
    * CORS options (optional depending on whether the websocket client is served on a different domain).
    * 
    * @see https://socket.io/docs/v4/handling-cors
    */
-	cors: {
+  cors: {
     origin: "https://laravel-application.local",
     methods: ["GET", "POST"],
-	},
+  },
 
   // any other relevant options...
 });
