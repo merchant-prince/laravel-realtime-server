@@ -1,9 +1,8 @@
 import { createServer as createHttpServer } from 'http';
-import IORedis from 'ioredis';
 import { Server as SocketIoServer, Socket as ServerSocket } from 'socket.io';
 import { io as SocketIoClient, Socket as ClientSocket } from 'socket.io-client';
 import Realtime from '../../src/realtime';
-import Redis from './mocks/redis';
+import RedisMock from 'ioredis-mock';
 
 /**
  * Set up the Socket.io server and client.
@@ -44,10 +43,10 @@ export const setupRealtimeServerAndSocketIoClients = (options?: {
   const socketIoServer = new SocketIoServer(httpServer, { serveClient: false });
   const realtime = new Realtime({
     database: {
-      connection: new Redis() as unknown as IORedis.Redis,
+      connection: new RedisMock(),
     },
     subscriber: {
-      connection: new Redis() as unknown as IORedis.Redis,
+      connection: new RedisMock(),
       prefix: normalizedOptions.realtime.prefix,
     },
     websocket: {

@@ -1,6 +1,6 @@
+import IORedis from 'ioredis';
 import Realtime from '../src/realtime';
 import { setupRealtimeServerAndSocketIoClients } from './utilities/setup';
-import RedisMock from '../tests/utilities/mocks/redis';
 
 describe('testing the Realtime class', () => {
   // Realtime.isPresenceChannel
@@ -142,6 +142,12 @@ describe('testing the Realtime class', () => {
     ]);
 
     await new Promise<void>((resolve, reject) => {
+      const redisPublisher = (
+        realtime.subscriber.connection as unknown as {
+          createConnectedClient: () => IORedis.Redis;
+        }
+      ).createConnectedClient();
+
       socketPairs[1]?.client.on(eventData.event, () => {
         reject(
           'This socket.io client is not supposed to receive the event because it did not subscribe to the channel.'
@@ -157,11 +163,7 @@ describe('testing the Realtime class', () => {
         resolve();
       });
 
-      (realtime.subscriber.connection as unknown as RedisMock).pmessage(
-        '',
-        channelName,
-        JSON.stringify(eventData)
-      );
+      redisPublisher.publish(channelName, JSON.stringify(eventData));
     });
 
     socketPairs.forEach(({ client }) => client.close());
@@ -196,6 +198,12 @@ describe('testing the Realtime class', () => {
     };
 
     await new Promise<void>((resolve, reject) => {
+      const redisPublisher = (
+        realtime.subscriber.connection as unknown as {
+          createConnectedClient: () => IORedis.Redis;
+        }
+      ).createConnectedClient();
+
       socketPairs[0]?.client.on(eventData.event, () => {
         reject(
           'This socket.io client is not supposed to receive the event because the event data contains its socket id (it was broadcasted from the Laravel application).'
@@ -211,11 +219,7 @@ describe('testing the Realtime class', () => {
         resolve();
       });
 
-      (realtime.subscriber.connection as unknown as RedisMock).pmessage(
-        '',
-        channelName,
-        JSON.stringify(eventData)
-      );
+      redisPublisher.publish(channelName, JSON.stringify(eventData));
     });
 
     socketPairs.forEach(({ client }) => client.close());
