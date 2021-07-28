@@ -704,6 +704,7 @@ __metadata:
     events: ^3.3.0
     http: ^0.0.1-security
     ioredis: ^4.27.6
+    ioredis-mock: ^5.6.0
     jest: ^27.0.6
     prettier: ^2.3.2
     rollup: ^2.53.2
@@ -2337,6 +2338,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fengari-interop@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "fengari-interop@npm:0.1.2"
+  peerDependencies:
+    fengari: ^0.1.0
+  checksum: 8115f237e23527be21ad3f7d9b4316267bb851b5bfa6e6406181a1bc4ecb041d0cc6333fb45c37e3ecbb62b94944aa6451362c11bdee82bfe66d55cce8a05a34
+  languageName: node
+  linkType: hard
+
+"fengari@npm:^0.1.4":
+  version: 0.1.4
+  resolution: "fengari@npm:0.1.4"
+  dependencies:
+    readline-sync: ^1.4.9
+    sprintf-js: ^1.1.1
+    tmp: ^0.0.33
+  checksum: d9a3887f87cc485c49df8dd77bf499f2becae78643bb7ceb6595c3d996f40e33d711a2f6d4e6fb91d42be6b1c1a06d5f7bb5c67a2462314294902464c3c2672c
+  languageName: node
+  linkType: hard
+
 "file-entry-cache@npm:^6.0.1":
   version: 6.0.1
   resolution: "file-entry-cache@npm:6.0.1"
@@ -2738,6 +2759,21 @@ __metadata:
   version: 2.0.4
   resolution: "inherits@npm:2.0.4"
   checksum: 98426da247ddfc3dcd7d7daedd90c3ca32d5b08deca08949726f12d49232aef94772a07b36cf4ff833e105ae2ef931777f6de4a6dd8245a216b9299ad4a50bea
+  languageName: node
+  linkType: hard
+
+"ioredis-mock@npm:^5.6.0":
+  version: 5.6.0
+  resolution: "ioredis-mock@npm:5.6.0"
+  dependencies:
+    fengari: ^0.1.4
+    fengari-interop: ^0.1.2
+    lodash: ^4.17.21
+    standard-as-callback: ^2.1.0
+  peerDependencies:
+    ioredis: 4.x
+    redis-commands: 1.x
+  checksum: 7e99a1f4d4e3288a1eaff5382b21662df60dec4fe1aa59354ddf970f816a104c51eae52618b9ec2e4670e2165f1f860070528b40c7fe0cf90762359cf11d6ce9
   languageName: node
   linkType: hard
 
@@ -3622,7 +3658,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:4.x, lodash@npm:^4.7.0":
+"lodash@npm:4.x, lodash@npm:^4.17.21, lodash@npm:^4.7.0":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: 4983720b9abca930a4a46f18db163d7dad8dd00dbed6db0cc7b499b33b717cce69f80928b27bbb1ff2cbd3b19d251ee90669a8b5ea466072ca81c2ebe91e7468
@@ -4012,6 +4048,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"os-tmpdir@npm:~1.0.2":
+  version: 1.0.2
+  resolution: "os-tmpdir@npm:1.0.2"
+  checksum: ca158a3c2e48748adc7736cdbe4c593723f8ed8581d2aae2f2a30fdb9417d4ba14bed1cd487d47561898a7b1ece88bce69745e9ce0303e1dea9ea7d22d1f1082
+  languageName: node
+  linkType: hard
+
 "p-each-series@npm:^2.1.0":
   version: 2.2.0
   resolution: "p-each-series@npm:2.2.0"
@@ -4287,6 +4330,13 @@ __metadata:
     string_decoder: ~1.1.1
     util-deprecate: ~1.0.1
   checksum: 6e3826560627a751feb3a8aec073ef94c6e47b8c8e06eb5d136323b5f09db9d2077c23a42a8d54ed0123695af54b36c1e4271a8ec55112b15f4b89020d8dec72
+  languageName: node
+  linkType: hard
+
+"readline-sync@npm:^1.4.9":
+  version: 1.4.10
+  resolution: "readline-sync@npm:1.4.10"
+  checksum: 4746ee66b7c8cee9a88fde2f2b304586d3c0b0bffd01f496519c5df7e0063a99f62778c3b35dcfc834de1a26a1c376d688f9c54f302ccb00db62296dd4613746
   languageName: node
   linkType: hard
 
@@ -4655,6 +4705,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sprintf-js@npm:^1.1.1":
+  version: 1.1.2
+  resolution: "sprintf-js@npm:1.1.2"
+  checksum: 50d2008328a3cafac658a40de7fb7d3d899b8e12906b3784113a97199618531bc4237ef2779cc5a9cd6df06b58036fedf4578648a5bbfd01825ecb56546e3982
+  languageName: node
+  linkType: hard
+
 "sprintf-js@npm:~1.0.2":
   version: 1.0.3
   resolution: "sprintf-js@npm:1.0.3"
@@ -4890,6 +4947,15 @@ __metadata:
   version: 6.0.1
   resolution: "throat@npm:6.0.1"
   checksum: c984a40b4725bbd6e8c49d57b2bd36ab36c5534e8a1bed0d278d480171fdf908f16ba343d61c3e9c2e3ed4b327a59c28432cfa44594453b756ec219a772395a8
+  languageName: node
+  linkType: hard
+
+"tmp@npm:^0.0.33":
+  version: 0.0.33
+  resolution: "tmp@npm:0.0.33"
+  dependencies:
+    os-tmpdir: ~1.0.2
+  checksum: 77666ca424a78fcfcc27a6576f24f01aa1300b10d22e4f1808809e560777672dd2d4a112604ab2ad86ec7cafd24472b9ccc41373c2b5b83797f27e6aff06cbe5
   languageName: node
   linkType: hard
 

@@ -48,6 +48,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["events", "npm:3.3.0"],
             ["http", "npm:0.0.1-security"],
             ["ioredis", "npm:4.27.6"],
+            ["ioredis-mock", "virtual:6608d2f2d90ac1b46283c56b5802aeac773e55c538ca0994983253f5e56817e10a2401d732d9a458b2ba1c931a38a2fc6a64fe1c22eb270b19adc2b81e41da1c#npm:5.6.0"],
             ["jest", "virtual:6608d2f2d90ac1b46283c56b5802aeac773e55c538ca0994983253f5e56817e10a2401d732d9a458b2ba1c931a38a2fc6a64fe1c22eb270b19adc2b81e41da1c#npm:27.0.6"],
             ["prettier", "npm:2.3.2"],
             ["rollup", "npm:2.53.2"],
@@ -1158,6 +1159,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["events", "npm:3.3.0"],
             ["http", "npm:0.0.1-security"],
             ["ioredis", "npm:4.27.6"],
+            ["ioredis-mock", "virtual:6608d2f2d90ac1b46283c56b5802aeac773e55c538ca0994983253f5e56817e10a2401d732d9a458b2ba1c931a38a2fc6a64fe1c22eb270b19adc2b81e41da1c#npm:5.6.0"],
             ["jest", "virtual:6608d2f2d90ac1b46283c56b5802aeac773e55c538ca0994983253f5e56817e10a2401d732d9a458b2ba1c931a38a2fc6a64fe1c22eb270b19adc2b81e41da1c#npm:27.0.6"],
             ["prettier", "npm:2.3.2"],
             ["rollup", "npm:2.53.2"],
@@ -3196,6 +3198,40 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["fengari", [
+        ["npm:0.1.4", {
+          "packageLocation": "./.yarn/cache/fengari-npm-0.1.4-f367acc87f-d9a3887f87.zip/node_modules/fengari/",
+          "packageDependencies": [
+            ["fengari", "npm:0.1.4"],
+            ["readline-sync", "npm:1.4.10"],
+            ["sprintf-js", "npm:1.1.2"],
+            ["tmp", "npm:0.0.33"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["fengari-interop", [
+        ["npm:0.1.2", {
+          "packageLocation": "./.yarn/cache/fengari-interop-npm-0.1.2-04351ddcca-8115f237e2.zip/node_modules/fengari-interop/",
+          "packageDependencies": [
+            ["fengari-interop", "npm:0.1.2"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:d2db96732dc9332912f2584c9b0de18a92cd1cce8bb95f6c6ef4918f0a07d23c2d8537cae2d86188e13a0a368499981b4050bf2e784687ac0f2e5ad030e0419f#npm:0.1.2", {
+          "packageLocation": "./.yarn/$$virtual/fengari-interop-virtual-ac68d2e977/0/cache/fengari-interop-npm-0.1.2-04351ddcca-8115f237e2.zip/node_modules/fengari-interop/",
+          "packageDependencies": [
+            ["fengari-interop", "virtual:d2db96732dc9332912f2584c9b0de18a92cd1cce8bb95f6c6ef4918f0a07d23c2d8537cae2d86188e13a0a368499981b4050bf2e784687ac0f2e5ad030e0419f#npm:0.1.2"],
+            ["@types/fengari", null],
+            ["fengari", "npm:0.1.4"]
+          ],
+          "packagePeers": [
+            "@types/fengari",
+            "fengari"
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["file-entry-cache", [
         ["npm:6.0.1", {
           "packageLocation": "./.yarn/cache/file-entry-cache-npm-6.0.1-31965cf0af-af83a41214.zip/node_modules/file-entry-cache/",
@@ -3666,6 +3702,36 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["redis-errors", "npm:1.2.0"],
             ["redis-parser", "npm:3.0.0"],
             ["standard-as-callback", "npm:2.1.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["ioredis-mock", [
+        ["npm:5.6.0", {
+          "packageLocation": "./.yarn/cache/ioredis-mock-npm-5.6.0-3db402e1c9-7e99a1f4d4.zip/node_modules/ioredis-mock/",
+          "packageDependencies": [
+            ["ioredis-mock", "npm:5.6.0"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:6608d2f2d90ac1b46283c56b5802aeac773e55c538ca0994983253f5e56817e10a2401d732d9a458b2ba1c931a38a2fc6a64fe1c22eb270b19adc2b81e41da1c#npm:5.6.0", {
+          "packageLocation": "./.yarn/$$virtual/ioredis-mock-virtual-d2db96732d/0/cache/ioredis-mock-npm-5.6.0-3db402e1c9-7e99a1f4d4.zip/node_modules/ioredis-mock/",
+          "packageDependencies": [
+            ["ioredis-mock", "virtual:6608d2f2d90ac1b46283c56b5802aeac773e55c538ca0994983253f5e56817e10a2401d732d9a458b2ba1c931a38a2fc6a64fe1c22eb270b19adc2b81e41da1c#npm:5.6.0"],
+            ["@types/ioredis", "npm:4.26.6"],
+            ["@types/redis-commands", null],
+            ["fengari", "npm:0.1.4"],
+            ["fengari-interop", "virtual:d2db96732dc9332912f2584c9b0de18a92cd1cce8bb95f6c6ef4918f0a07d23c2d8537cae2d86188e13a0a368499981b4050bf2e784687ac0f2e5ad030e0419f#npm:0.1.2"],
+            ["ioredis", "npm:4.27.6"],
+            ["lodash", "npm:4.17.21"],
+            ["redis-commands", null],
+            ["standard-as-callback", "npm:2.1.0"]
+          ],
+          "packagePeers": [
+            "@types/ioredis",
+            "@types/redis-commands",
+            "ioredis",
+            "redis-commands"
           ],
           "linkType": "HARD",
         }]
@@ -5083,6 +5149,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["os-tmpdir", [
+        ["npm:1.0.2", {
+          "packageLocation": "./.yarn/cache/os-tmpdir-npm-1.0.2-e305b0689b-ca158a3c2e.zip/node_modules/os-tmpdir/",
+          "packageDependencies": [
+            ["os-tmpdir", "npm:1.0.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["p-each-series", [
         ["npm:2.2.0", {
           "packageLocation": "./.yarn/cache/p-each-series-npm-2.2.0-b9907a1ae6-d5a0896eb7.zip/node_modules/p-each-series/",
@@ -5416,6 +5491,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["safe-buffer", "npm:5.1.2"],
             ["string_decoder", "npm:1.1.1"],
             ["util-deprecate", "npm:1.0.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["readline-sync", [
+        ["npm:1.4.10", {
+          "packageLocation": "./.yarn/cache/readline-sync-npm-1.4.10-6809f52ca7-4746ee66b7.zip/node_modules/readline-sync/",
+          "packageDependencies": [
+            ["readline-sync", "npm:1.4.10"]
           ],
           "linkType": "HARD",
         }]
@@ -5837,6 +5921,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["sprintf-js", "npm:1.0.3"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:1.1.2", {
+          "packageLocation": "./.yarn/cache/sprintf-js-npm-1.1.2-ea16269a6d-50d2008328.zip/node_modules/sprintf-js/",
+          "packageDependencies": [
+            ["sprintf-js", "npm:1.1.2"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["ssri", [
@@ -6086,6 +6177,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/throat-npm-6.0.1-1308a37a10-c984a40b47.zip/node_modules/throat/",
           "packageDependencies": [
             ["throat", "npm:6.0.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["tmp", [
+        ["npm:0.0.33", {
+          "packageLocation": "./.yarn/cache/tmp-npm-0.0.33-bcbf65df2a-77666ca424.zip/node_modules/tmp/",
+          "packageDependencies": [
+            ["tmp", "npm:0.0.33"],
+            ["os-tmpdir", "npm:1.0.2"]
           ],
           "linkType": "HARD",
         }]
