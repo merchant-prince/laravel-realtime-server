@@ -2,18 +2,6 @@ import IORedis from 'ioredis';
 
 /**
  * This class subscribes to events on the Laravel application's redis server.
- *
- * If we want to deploy more than one socket.io server, the current strategy needs to be changed:
- *
- * Instead of directly subscribing to the Laravel application's redis server, we would need an application between the
- * Laravel application's redis server, and the socket.io servers. The aforementioned application would subscribe to all
- * the 'pmessage's from the Larvel application's redis server, and either:
- *
- *    STREAM them to a consumer group consisting of all the socket.io servers,
- * or
- *    LPUSH them to a LIST, which is BLPOPed by the socket.io servers.
- *
- * @see https://stackoverflow.com/questions/64508979/how-to-make-subscribers-load-balanced-with-redis-pubsub
  */
 export default class RedisSubscriber {
   /**
